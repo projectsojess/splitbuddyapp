@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
+import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/themes/theme.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -40,7 +41,14 @@ class WelcomePage extends StatelessWidget {
                       color: Pallete.buttonBgcolor,
                     ),
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginView(),
+                          ),
+                        );
+                      },
                       child: Center(
                         child: SvgPicture.asset(
                           AssetConstants.arrowRight,
