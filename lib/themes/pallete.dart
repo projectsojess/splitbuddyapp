@@ -6,4 +6,5 @@ class Pallete {
   static const Color inputLabelTextColor = Colors.white;
   static const inputFieldTextColor = Color(0xFFbababa);
   static const buttonBgcolor = Color(0xFFed7501);
+  static const authIconsColor = Colors.white;
 }
