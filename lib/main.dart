@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:splitbuddy/common/welcome_page.dart';
 import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/themes/app_theme.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.theme,
-      home: const LoginView(),
+      home: const WelcomePage(),
     );
   }
 }
