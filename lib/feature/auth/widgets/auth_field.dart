@@ -19,7 +19,7 @@ class AuthField extends StatelessWidget {
           fillColor: Pallete.inputFieldBgColor,
           hintText: hintText,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide.none,
           )),
     );
