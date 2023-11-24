@@ -35,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
                   alignment: Alignment.center,
                   child: Column(children: [
                     Image.asset(
-                      AssetConstants.login_screen_image,
+                      AssetConstants.loginScreenimage,
                       height: 300,
                     ),
                     Text(
