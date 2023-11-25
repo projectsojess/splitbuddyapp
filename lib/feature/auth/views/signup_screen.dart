@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
+import 'package:splitbuddy/dtos/country.dart';
 import 'package:splitbuddy/feature/auth/widgets/auth_field.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
@@ -18,7 +19,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final String iconPathEmail = AssetConstants.envelope;
   final String iconPathPassword = AssetConstants.lock;
-
+  final String iconPathDialpad = AssetConstants.dialpad;
+  final List<Country> _countries = [
+    Country(name: 'INDIA', code: '+91'),
+    Country(name: 'USA', code: '+1')
+  ];
+  Country? _selectedCountry;
   @override
   void dispose() {
     super.dispose();
@@ -41,7 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(children: [
                     Image.asset(
                       AssetConstants.signupScreenImage,
-                      height: 300,
+                      height: 250,
                     ),
                     UIConstants.getAppTitle(32),
                     SizedBox(
@@ -79,6 +85,74 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: passwordController,
                 hintText: 'Enter your password',
                 iconPath: iconPathPassword,
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Pallete.buttonBgcolor,
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    child: DropdownButton<Country>(
+                      value: _countries[0], // selected country value
+                      onChanged: (Country? newValue) {
+                        setState(() {
+                          _selectedCountry = newValue!;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: Pallete.authIconsColor,
+                      ),
+                      elevation: 2,
+                      underline: Container(),
+                      items: _countries
+                          .map<DropdownMenuItem<Country>>((Country country) {
+                        return DropdownMenuItem<Country>(
+                          value: country,
+                          child: Row(
+                            children: [
+                              UIConstants.getSVGIconSB(
+                                  AssetConstants.getFullFlagPath(country.name)),
+                              SizedBox(width: 10),
+                              Text('(${country.code})'),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Container(
+                    child: Expanded(
+                      child: TextFormField(
+                        controller: TextEditingController(),
+                        style: TextStyle(
+                          color: Pallete.inputFieldTextColor,
+                        ),
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Pallete.inputFieldBgColor,
+                            hintText: 'Enter your phone nunber',
+                            suffixIcon: UIConstants.getSVGIcon(
+                                iconPathDialpad, Pallete.authIconsColor),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide.none,
+                            )),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 12,
               ),
               SizedBox(
                 height: 40,
