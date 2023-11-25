@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.theme,
-      home: const VerifyOtpScreen(),
+      home: const WelcomePage(),
     );
   }
 }
