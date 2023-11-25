@@ -38,6 +38,18 @@ class UIConstants {
     ));
   }
 
+  static SizedBox getSVGIconSB(String iconPath) {
+    return SizedBox(
+        child: Transform.scale(
+      scale: 0.8,
+      child: SvgPicture.asset(
+        iconPath,
+        height: 20,
+        width: 20,
+      ),
+    ));
+  }
+
   static Future<Object?> getLoginScreen(BuildContext context) {
     return Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginView()));

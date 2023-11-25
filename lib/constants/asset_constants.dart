@@ -7,4 +7,9 @@ class AssetConstants {
   static const String envelope = '$_svgPath/envelope.svg';
   static const String lock = '$_svgPath/lock.svg';
   static const String signupScreenImage = '$_pngPath/signup_screen_image.png';
+  static const String _flagPath = 'assets/flags';
+
+  static String getFullFlagPath(String flagPrefix) {
+    return '$_flagPath/${flagPrefix}_flag.svg';
+  }
 }
