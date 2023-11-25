@@ -9,8 +9,12 @@ class AssetConstants {
   static const String lock = '$_svgPath/lock.svg';
   static const String signupScreenImage = '$_pngPath/signup_screen_image.png';
   static const String dialpad = '$_svgPath/dialpad.svg';
+  static const String verifyOtpScreenImage =
+      '$_pngPath/verify_mobile_no_image.png';
 
   static String getFullFlagPath(String flagPrefix) {
     return '$_flagPath/${flagPrefix}_flag.svg';
   }
+
+  static const String fontPrimary = 'Source Sans Pro';
 }
