@@ -1,10 +1,14 @@
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
-import "package:splitbuddy/constants/asset_constants.dart";
+import "package:splitbuddy/constants/constants.dart";
+import "package:splitbuddy/feature/auth/views/signup_screen.dart";
 import "package:splitbuddy/feature/auth/widgets/auth_field.dart";
 import "package:splitbuddy/themes/pallete.dart";
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  static route() => MaterialPageRoute(builder: (context) => const LoginView());
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -115,6 +119,27 @@ class _LoginViewState extends State<LoginView> {
                         fontSize: 16,
                         color: Pallete.inputLabelTextColor,
                       )),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Don\'t have an account?    ',
+                      style: TextStyle(color: Pallete.inputLabelTextColor),
+                      children: [
+                        TextSpan(
+                          text: 'Sign up',
+                          style: TextStyle(
+                              color: Pallete.inputLabelTextColor,
+                              fontWeight: FontWeight.bold),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () =>
+                                Navigator.push(context, SignUpScreen.route()),
+                        )
+                      ]),
                 ),
               )
             ],
