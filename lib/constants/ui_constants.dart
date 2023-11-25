@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:flutter_svg/svg.dart";
+import "package:splitbuddy/feature/auth/views/login_view.dart";
 
 class UIConstants {
   static Text getAppTitle(double fontSize) {
@@ -21,5 +23,23 @@ class UIConstants {
         fontFamily: 'Source Sans Pro',
       ),
     );
+  }
+
+  static SizedBox getSVGIcon(String iconPath, Color color) {
+    return SizedBox(
+        child: Transform.scale(
+      scale: 0.5,
+      child: SvgPicture.asset(
+        iconPath,
+        color: color,
+        height: 10,
+        width: 10,
+      ),
+    ));
+  }
+
+  static Future<Object?> getLoginScreen(BuildContext context) {
+    return Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginView()));
   }
 }

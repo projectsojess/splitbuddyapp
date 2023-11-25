@@ -13,6 +13,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final String iconPathEmail = AssetConstants.envelope;
+  final String iconPathPassword = AssetConstants.lock;
 
   @override
   void dispose() {
@@ -60,6 +62,7 @@ class _LoginViewState extends State<LoginView> {
               AuthField(
                 controller: emailController,
                 hintText: 'Enter your email',
+                iconPath: iconPathEmail,
               ),
               Container(
                   padding: EdgeInsets.all(12),
@@ -74,6 +77,7 @@ class _LoginViewState extends State<LoginView> {
               AuthField(
                 controller: passwordController,
                 hintText: 'Enter your password',
+                iconPath: iconPathPassword,
               ),
               Container(
                 alignment: Alignment.centerRight,
