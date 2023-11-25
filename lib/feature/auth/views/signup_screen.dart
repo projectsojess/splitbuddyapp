@@ -19,6 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final String iconPathEmail = AssetConstants.envelope;
   final String iconPathPassword = AssetConstants.lock;
+  final String iconPathDialpad = AssetConstants.dialpad;
   final List<Country> _countries = [
     Country(name: 'INDIA', code: '+91'),
     Country(name: 'USA', code: '+1')
@@ -139,6 +140,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             filled: true,
                             fillColor: Pallete.inputFieldBgColor,
                             hintText: 'Enter your phone nunber',
+                            suffixIcon: UIConstants.getSVGIcon(
+                                iconPathDialpad, Pallete.authIconsColor),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30.0),
                               borderSide: BorderSide.none,
