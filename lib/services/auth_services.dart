@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitbuddy/common/common.dart';
 import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/user.dart';
@@ -21,7 +22,7 @@ class AuthService {
   }) async {
     try {
       User user = User(
-          userId: '',
+          userId: 0,
           username: username,
           email: email,
           token: '',
@@ -76,9 +77,7 @@ class AuthService {
           onSuccess: () async {
             userProvider.setUser(response.body);
             await SharedPreferenceService.setString(
-              RequestHeaders.JWT_HEADER,
-              jsonDecode(response.body)['token'],
-            );
+                RequestHeaders.JWT_HEADER, jsonDecode(response.body)['token']);
             Navigator.push(context, HomeScreen.route());
           });
     } catch (e) {

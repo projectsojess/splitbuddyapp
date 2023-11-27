@@ -1,25 +1,37 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceService {
-  static late SharedPreferences _prefs;
+  static SharedPreferences? _prefs;
+  static bool _initialized = false;
 
   static Future<void> initialize() async {
-    _prefs = await SharedPreferences.getInstance();
+    if (!_initialized) {
+      _prefs = await SharedPreferences.getInstance();
+      _initialized = true;
+    }
   }
 
   static Future<bool> setString(String key, String value) async {
-    return await _prefs.setString(key, value);
+    await _ensureInitialized();
+    return _prefs!.setString(key, value);
   }
 
-  static String getString(String key) {
-    return _prefs.getString(key) ?? '';
+  static String getString(String key, {String defaultValue = ''}) {
+    _ensureInitializedSync();
+    return _prefs!.getString(key) ?? defaultValue;
   }
 
-  static Future<bool> setBool(String key, bool value) async {
-    return await _prefs.setBool(key, value);
+  static void _ensureInitializedSync() {
+    if (!_initialized) {
+      throw Exception('SharedPreferences not initialized');
+    }
   }
 
-  static bool getBool(String key, {bool defaultValue = false}) {
-    return _prefs.getBool(key) ?? defaultValue;
+  static Future<void> _ensureInitialized() async {
+    if (!_initialized) {
+      await initialize();
+    }
   }
+
+  // ... other methods ...
 }

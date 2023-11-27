@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/user.dart';
+import 'package:splitbuddy/dtos/login_response.dart';
 
 class UserProvider extends ChangeNotifier {
-  User _user = User(
-    userId: '',
+  LoginResponse _user = LoginResponse(
+    userId: 0,
     username: '',
     email: '',
     token: '',
-    password: '',
   );
 
-  User get user => _user;
+  LoginResponse get user => _user;
 
   void setUser(String user) {
-    _user = User.fromJson(user);
+    _user = LoginResponse.fromJson(user);
     notifyListeners();
   }
 
-  void setUserFromModel(User user) {
+  void setUserFromModel(LoginResponse user) {
     _user = user;
     notifyListeners();
   }

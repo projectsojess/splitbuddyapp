@@ -2,7 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class User {
-  final String userId;
+  final int userId;
   final String username;
   final String email;
   final String token;
@@ -25,7 +25,7 @@ class User {
     };
 
     // Only add non-empty values to the map for serialization
-    if (userId.isNotEmpty) {
+    if (userId != 0) {
       map['userId'] = userId;
     }
     if (token.isNotEmpty) {
@@ -40,12 +40,12 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      userId: map['userId'] as String,
+      userId: map['userId'] as int,
       username: map['username'] as String,
       email: map['email'] as String,
       token: map['token'] as String,
       password: map['password'] as String,
-      phone: map['phone'] as String,
+      phone: map['phone'] as String?,
     );
   }
 
