@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/country.dart';
-import 'package:splitbuddy/feature/auth/services/auth_services.dart';
 import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/feature/auth/widgets/auth_field.dart';
+import 'package:splitbuddy/services/auth_services.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -25,9 +25,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final String iconPathEmail = AssetConstants.envelope;
   final String iconPathPassword = AssetConstants.lock;
   final String iconPathDialpad = AssetConstants.dialpad;
+  final AuthService authService = AuthService();
 
   void signUpUser() {
-    AuthService.SignUpUser(
+    authService.SignUpUser(
       context: context,
       email: emailController.text,
       password: passwordController.text,
@@ -173,7 +174,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: Pallete.inputFieldBgColor,
-                            hintText: 'Enter your phone nunber',
+                            hintStyle: TextStyle(
+                              fontStyle: FontStyle.italic,
+                            ),
+                            hintText: '         (Optional)',
                             suffixIcon: UIConstants.getSVGIcon(
                                 iconPathDialpad, Pallete.authIconsColor),
                             border: OutlineInputBorder(
