@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/country.dart';
+import 'package:splitbuddy/feature/auth/services/auth_services.dart';
 import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/feature/auth/widgets/auth_field.dart';
 import 'package:splitbuddy/themes/pallete.dart';
@@ -24,6 +25,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final String iconPathEmail = AssetConstants.envelope;
   final String iconPathPassword = AssetConstants.lock;
   final String iconPathDialpad = AssetConstants.dialpad;
+
+  void signUpUser() {
+    AuthService.SignUpUser(
+      context: context,
+      email: emailController.text,
+      password: passwordController.text,
+      username: 'test',
+      phone: phoneNumberController.text != ''
+          ? _selectedCountry!.code + phoneNumberController.text
+          : '',
+    );
+  }
 
   List<Country> _countries = []; // Initialize _countries as an empty list
   Country? _selectedCountry;
@@ -183,7 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle sign-in action
+                    signUpUser();
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Pallete.buttonBgcolor,
