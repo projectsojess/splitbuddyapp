@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/common/welcome_page.dart';
+import 'package:splitbuddy/feature/welcome_page.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/themes/app_theme.dart';
 import 'package:provider/provider.dart';

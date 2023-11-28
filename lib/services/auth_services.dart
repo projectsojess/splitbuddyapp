@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitbuddy/common/common.dart';
 import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/user.dart';
