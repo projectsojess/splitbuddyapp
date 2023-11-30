@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
-import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
 import 'package:splitbuddy/feature/friends/views/friend_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
