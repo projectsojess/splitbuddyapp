@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/country.dart';
+import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/feature/auth/widgets/auth_field.dart';
+import 'package:splitbuddy/services/auth_services.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+  static route() =>
+      MaterialPageRoute(builder: (context) => const SignUpScreen());
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -16,15 +20,39 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final phoneNumberController = TextEditingController();
 
   final String iconPathEmail = AssetConstants.envelope;
   final String iconPathPassword = AssetConstants.lock;
   final String iconPathDialpad = AssetConstants.dialpad;
-  final List<Country> _countries = [
-    Country(name: 'INDIA', code: '+91'),
-    Country(name: 'USA', code: '+1')
-  ];
+  final AuthService authService = AuthService();
+
+  void signUpUser() {
+    authService.SignUpUser(
+      context: context,
+      email: emailController.text,
+      password: passwordController.text,
+      username: 'test',
+      phone: phoneNumberController.text != ''
+          ? _selectedCountry!.code + phoneNumberController.text
+          : '',
+    );
+  }
+
+  List<Country> _countries = []; // Initialize _countries as an empty list
   Country? _selectedCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    _countries = [
+      Country(name: 'INDIA', code: '+91'),
+      Country(name: 'USA', code: '+1'),
+      // Add more countries as needed
+    ]; // Load/populate countries // Set selectedCountry based on populated list
+    _selectedCountry = _countries.first;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -86,9 +114,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 hintText: 'Enter your password',
                 iconPath: iconPathPassword,
               ),
-              SizedBox(
-                height: 40,
-              ),
+              Container(
+                  padding: EdgeInsets.all(12),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Phone',
+                    style: TextStyle(
+                      color: Pallete.inputLabelTextColor,
+                      fontSize: 16,
+                    ),
+                  )),
               Row(
                 children: [
                   Container(
@@ -98,10 +133,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     child: DropdownButton<Country>(
-                      value: _countries[0], // selected country value
+                      value: _selectedCountry, // selected country value
                       onChanged: (Country? newValue) {
                         setState(() {
-                          _selectedCountry = newValue!;
+                          _selectedCountry = newValue;
                         });
                       },
                       icon: Icon(
@@ -132,14 +167,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Container(
                     child: Expanded(
                       child: TextFormField(
-                        controller: TextEditingController(),
+                        controller: phoneNumberController,
                         style: TextStyle(
                           color: Pallete.inputFieldTextColor,
                         ),
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: Pallete.inputFieldBgColor,
-                            hintText: 'Enter your phone nunber',
+                            hintStyle: TextStyle(
+                              fontStyle: FontStyle.italic,
+                            ),
+                            hintText: '         (Optional)',
                             suffixIcon: UIConstants.getSVGIcon(
                                 iconPathDialpad, Pallete.authIconsColor),
                             border: OutlineInputBorder(
@@ -162,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle sign-in action
+                    signUpUser();
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Pallete.buttonBgcolor,
@@ -191,7 +229,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               color: Pallete.inputLabelTextColor,
                               fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => UIConstants.getLoginScreen(context),
+                            ..onTap = () => Navigator.push(
+                                  context,
+                                  LoginView.route(),
+                                ),
                         )
                       ]),
                 ),

@@ -7,4 +7,6 @@ class Pallete {
   static const inputFieldTextColor = Color(0xFFbababa);
   static const buttonBgcolor = Color(0xFFed7501);
   static const authIconsColor = Colors.white;
+  static const primaryColor = Color(0xFF161616);
+  static const secondaryColor = Color(0xFFed7501);
 }

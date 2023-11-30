@@ -41,3 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/shared_prefs/*.xml
+
+/ios/Runner/Runner.xcworkspace/xcuserdata/
+/ios/Runner/Runner.xcworkspace/xcshareddata/Runner.xccheckout
