@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
+import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
-class FriendScreen extends StatefulWidget {
-  final int friendId;
-  static route(friendId) =>
-      MaterialPageRoute(builder: (context) => FriendScreen(friendId: friendId));
-  const FriendScreen({super.key, required this.friendId});
+class FriendDetailScreen extends StatefulWidget {
+  final FriendResponse friend;
+  static route({required FriendResponse friend}) => MaterialPageRoute(
+      builder: (context) => FriendDetailScreen(friend: friend));
+  const FriendDetailScreen({Key? key, required this.friend}) : super(key: key);
 
   @override
-  State<FriendScreen> createState() => _FriendScreenState();
+  State<FriendDetailScreen> createState() => _FriendDetailScreenState();
 }
 
-class _FriendScreenState extends State<FriendScreen> {
+class _FriendDetailScreenState extends State<FriendDetailScreen> {
   List<Expense> expenses = [];
   @override
   Widget build(BuildContext context) {
+    final List<FriendResponse> friends = [widget.friend];
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.friend.name),
+      ),
       body: expenses.isEmpty
           ? Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.push(context, CreateExpenseNormal.route());
+                  Navigator.push(
+                      context, CreateExpenseNormal.route(friend: friends));
                 },
                 icon: Icon(Icons.plus_one),
                 style:

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splitbuddy/dtos/friendResponse.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
 
 import '../widgets/widgets.dart';
 
 class CreateExpenseNormal extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const CreateExpenseNormal());
-  const CreateExpenseNormal({super.key});
+  final List<FriendResponse> friend;
+
+  static route({required List<FriendResponse> friend}) => MaterialPageRoute(
+      builder: (context) => CreateExpenseNormal(friend: friend));
+
+  const CreateExpenseNormal({super.key, required this.friend});
 
   @override
   State<CreateExpenseNormal> createState() => _CreateExpenseNormalState();
@@ -21,6 +27,34 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   final TextEditingController _taxController = TextEditingController();
   final TextEditingController _serviceChargeController =
       TextEditingController();
+  final TextEditingController _shareController = TextEditingController();
+
+  int _paidBy = 0; // Default paid by yourself
+  String _splitType = 'E'; // Default split type is equally
+  DateTime _selectedDate = DateTime.now(); // Default selected date
+
+  void handlePaidByChanged(int newValue) {
+    setState(() {
+      _paidBy = newValue;
+    });
+  }
+
+  void handleSplitTypeChanged(String newValue) {
+    setState(() {
+      _splitType = newValue;
+    });
+  }
+
+  void handleDateSelected(DateTime selectedDate) {
+    setState(() {
+      _selectedDate = selectedDate;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -32,24 +66,18 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     _serviceChargeController.dispose();
   }
 
-  DateTime? _selectedDate;
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).user;
+    _paidBy = user.userId;
+    // Obtain the current user ID from the provider
+    int currentUserId = user.userId;
+
+    // Create the map with the first entry (current user ID) and second entry (from object)
+    final Map<int, String> paidByOptions = {
+      currentUserId: 'You',
+      widget.friend[0].userToFriendId: widget.friend[0].name,
+    };
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -62,12 +90,15 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () => _selectDate(context),
-                      icon: Icon(Icons.calendar_today),
-                      label: Text(_selectedDate == null
-                          ? 'Select Date'
-                          : 'Selected Date: ${_selectedDate.toString().substring(0, 10)}'),
+                    ExpenseOptions(
+                      onPaidByChanged: handlePaidByChanged,
+                      onSplitTypeChanged: handleSplitTypeChanged,
+                      onDateSelected: handleDateSelected,
+                      shareController: _shareController,
+                      paidByOptions: paidByOptions,
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     ExpenseForm(
                       formKey: _formKey,
@@ -114,4 +145,9 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
           ),
         ));
   }
+
+  // int getCurentUserId() {
+  //   final user = Provider.of<UserProvider>(context).user;
+  //   return user.userId;
+  // }
 }

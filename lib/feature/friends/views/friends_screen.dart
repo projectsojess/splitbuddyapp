@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
-import 'package:splitbuddy/feature/friends/views/friend_screen.dart';
+import 'package:splitbuddy/feature/friends/views/friend_detail_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
 import 'package:splitbuddy/themes/theme.dart';
 
@@ -18,8 +18,7 @@ class FriendsScreen extends StatefulWidget {
 class _FriendScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
-    final List<FriendResponse> friendsList =
-        Provider.of<FriendsProvider>(context).friends;
+    var friendsProvider = Provider.of<FriendsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Friends'),
@@ -33,7 +32,7 @@ class _FriendScreenState extends State<FriendsScreen> {
           ),
         ],
       ),
-      body: friendsList.isEmpty
+      body: friendsProvider.friends.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -45,7 +44,10 @@ class _FriendScreenState extends State<FriendsScreen> {
                   SizedBox(height: 10.0),
                   ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.push(context, AddFriendsScreen.route());
+                      Navigator.push(
+                        context,
+                        AddFriendsScreen.route(),
+                      );
                     },
                     label: Text('Add Friends'),
                     icon: Icon(Icons.person_add),
@@ -56,19 +58,21 @@ class _FriendScreenState extends State<FriendsScreen> {
               ),
             )
           : ListView.builder(
-              itemCount: friendsList.length,
+              itemCount: friendsProvider.friends.length,
               itemBuilder: (context, index) {
+                final FriendResponse friend = friendsProvider.friends[index];
                 return ListTile(
                   leading: CircleAvatar(
                     // You can set profile images here
-                    child: Text(friendsList[index].name[0]),
+                    child: Text(friend.name[0]),
                   ),
-                  title: Text(friendsList[index].name),
+                  title: Text(friend.name),
                   trailing: Text(
-                    '\$${friendsList[index].amount.toString()}',
+                    '\$${friend.amount.toString()}',
                   ),
                   onTap: () {
-                    Navigator.push(context, FriendScreen.route(1000));
+                    Navigator.push(
+                        context, FriendDetailScreen.route(friend: friend));
                   },
                 );
               },
