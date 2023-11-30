@@ -122,33 +122,33 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     int totalshares = 0;
     Map<int, double>? shareDistribution = {};
     if (_splitType == 'S' || _splitType == 'P') {
-      _shareControllers.entries.map((entry) {
-        double value = double.tryParse(entry.value.text) ?? 0.0;
-        totalshares += value as int;
-        shareDistribution.putIfAbsent(
-            entry.key, () => double.tryParse(entry.value.text) ?? 0.0);
+      _shareControllers.forEach((key, value) {
+        double val = double.tryParse(value.text) ?? 0.0;
+        totalshares += val.round();
+        shareDistribution[key] = val;
       });
-      service.createExpenseNormal(
-        context: context,
-        paidBy: _paidBy,
-        payee: _payee,
-        type: _splitType,
-        date: _selectedDate,
-        description: _descriptionController.text.trim(),
-        shareDistribution: shareDistribution,
-        totalShares: totalshares,
-        tax: tax,
-        untaxedAmount: untaxedAmount,
-        serviceCharge: serviceCharge,
-        totalAmount: amount,
-      );
     }
+    service.createExpenseNormal(
+      context: context,
+      paidBy: _paidBy,
+      payee: _payee,
+      type: _splitType,
+      date: _selectedDate,
+      description: description,
+      shareDistribution: shareDistribution,
+      totalShares: totalshares,
+      tax: tax,
+      untaxedAmount: untaxedAmount,
+      serviceCharge: serviceCharge,
+      totalAmount: amount,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
     _paidBy = user.userId;
+    _payee = widget.friend[0].userToFriendId;
     // Obtain the current user ID from the provider
     int currentUserId = user.userId;
 
@@ -200,25 +200,8 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           // Perform your submission logic here
-                          final double amount =
-                              double.tryParse(_amountController.text) ?? 0.0;
-                          final String description =
-                              _descriptionController.text;
-                          final double untaxedAmount =
-                              double.tryParse(_untaxedAmountController.text) ??
-                                  0.0;
-                          final double tax =
-                              double.tryParse(_taxController.text) ?? 0.0;
-                          final double serviceCharge =
-                              double.tryParse(_serviceChargeController.text) ??
-                                  0.0;
                           addExpense();
                           // Handle the submitted data as needed
-                          print('Amount: $amount');
-                          print('Description: $description');
-                          print('Untaxed Amount: $untaxedAmount');
-                          print('Tax: $tax%');
-                          print('Service Charge: $serviceCharge%');
                         }
                       },
                       label: Text('Add '),

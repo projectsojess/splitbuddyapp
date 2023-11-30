@@ -86,7 +86,7 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
               onChanged: (newValue) {
                 setState(() {
                   _splitType = newValue!;
-                  widget.onSplitTypeChanged(_shareTypeOptions[newValue]!);
+                  widget.onSplitTypeChanged(newValue);
                 });
               },
               items: _shareTypeOptions.keys.map((String value) {
@@ -112,10 +112,11 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
             children: widget.paidByOptions.entries.map((entry) {
               int key = entry.key;
               String value = entry.value;
-              TextEditingController controller = widget.shareControllers[key]!;
+              widget.shareControllers
+                  .putIfAbsent(key, () => TextEditingController());
               IconData icon = _splitType == 'P' ? Icons.percent : Icons.share;
               return ShareTypeField(
-                  controller: controller,
+                  controller: widget.shareControllers[key]!,
                   name: value,
                   shareType: _splitType,
                   icon: icon);

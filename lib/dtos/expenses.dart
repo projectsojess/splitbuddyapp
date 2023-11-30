@@ -33,21 +33,36 @@ class Expense {
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'expenseId': expenseId,
+    Map<String, dynamic> map = {
       'paidBy': paidBy,
       'payee': payee,
       'type': type,
       'date': date.millisecondsSinceEpoch,
       'description': description,
-      'shares': shares,
-      'shareDistribution': shareDistribution,
-      'totalShares': totalShares,
-      'tax': tax,
-      'serviceCharge': serviceCharge,
-      'untaxedAmount': untaxedAmount,
-      'totalAmount': totalAmount,
+      'shares': _convertSharesToJson(shares),
     };
+    if (expenseId != 0) {
+      map['expenseId'] = expenseId;
+    }
+    if (totalShares != 0) {
+      map['totalShares'] = totalShares;
+    }
+    if (tax != 0) {
+      map['tax'] = tax;
+    }
+    if (serviceCharge != 0) {
+      map['serviceCharge'] = serviceCharge;
+    }
+    if (untaxedAmount != 0) {
+      map['untaxedAmount'] = untaxedAmount;
+    }
+    if (totalAmount != 0) {
+      map['totalAmount'] = totalAmount;
+    }
+    if (!shareDistribution!.isEmpty) {
+      map['shareDistribution'] = _convertSharesToJson(shareDistribution!);
+    }
+    return map;
   }
 
   factory Expense.fromMap(Map<String, dynamic> map) {
@@ -79,4 +94,12 @@ class Expense {
 
   factory Expense.fromJson(String source) =>
       Expense.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  Map<String, dynamic> _convertSharesToJson(Map<int, double> shares) {
+    final Map<String, dynamic> convertedMap = {};
+    shares.forEach((key, value) {
+      convertedMap[key.toString()] = value;
+    });
+    return convertedMap;
+  }
 }

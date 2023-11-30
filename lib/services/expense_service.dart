@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:splitbuddy/common/common.dart';
 import 'package:http/http.dart' as http;
 import 'package:splitbuddy/constants/constants.dart';
-import 'package:splitbuddy/constants/server_constants.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
   void createExpenseNormal({
@@ -21,15 +21,21 @@ class ExpenseService {
     double? totalAmount,
   }) async {
     try {
+      String token =
+          SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       double shareAmount = 0;
       if (type == 'E') {
         shareAmount = totalAmount! / 2;
       } else if (type == 'P') {
-        double shareP = shareDistribution![payee]!;
-        shareAmount = (totalAmount! * shareP) / 100;
+        if (shareDistribution != null) {
+          double shareP = shareDistribution[payee]!;
+          shareAmount = (totalAmount! * shareP) / 100;
+        }
       } else if (type == 'S') {
-        double shareS = shareDistribution![payee]!;
-        shareAmount = (totalAmount! * shareS) / totalShares!;
+        if (shareDistribution != null) {
+          double shareS = shareDistribution[payee]!;
+          shareAmount = (totalAmount! * shareS) / totalShares!;
+        }
       }
       Map<int, double> shares = {
         paidBy: totalAmount! - shareAmount,
@@ -50,15 +56,15 @@ class ExpenseService {
         untaxedAmount: untaxedAmount,
         totalAmount: totalAmount,
       );
-
       http.Response response = await http.post(
           Uri.parse(ServerConstants.addExpenseNormal),
           body: expenseRequest.toJson(),
-          headers: RequestHeaders.getAuthenticatedHeaders());
+          headers: RequestHeaders.getAuthenticatedHeaders(token: token));
       httpErrorHandle(
           response: response, context: context, onSuccess: () => {});
     } catch (e) {
-      showSnackbar(context, e.toString());
+      throw e;
+      // showSnackbar(context, e.toString());
     }
   }
 }

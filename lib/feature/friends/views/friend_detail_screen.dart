@@ -43,7 +43,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                 String formattedDate =
                     '${expense.date.month}/${expense.date.day}';
                 return Dismissible(
-                  key: Key(expense.name), // Unique key for each item
+                  key: Key(expense.description), // Unique key for each item
                   background: Container(
                     color: Colors.red,
                     child: Icon(Icons.delete, color: Colors.white),
@@ -55,7 +55,8 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                       expenses.removeAt(index);
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${expense.name} dismissed')),
+                      SnackBar(
+                          content: Text('${expense.description} dismissed')),
                     );
                   },
                   child: ListTile(
@@ -66,11 +67,13 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                         Icon(Icons.food_bank),
                       ],
                     ),
-                    title: Text(expense.name),
+                    title: Text(expense.description),
                     trailing: Text(
-                      '\$${expense.amount.toStringAsFixed(2)}',
+                      '\$${expense.totalAmount}',
                       style: TextStyle(
-                        color: expense.isOwed ? Colors.red : Colors.green,
+                        color: expense.totalAmount! < 0.0
+                            ? Colors.red
+                            : Colors.green,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
