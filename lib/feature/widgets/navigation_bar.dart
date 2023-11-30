@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/feature/groups/views/group_screen.dart';
+import 'package:splitbuddy/feature/groups/views/groups_screen.dart';
 import 'package:splitbuddy/feature/account/views/account_screen.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
 import 'package:splitbuddy/feature/friends/views/friends_screen.dart';
@@ -7,6 +7,9 @@ import 'package:splitbuddy/feature/home/views/home_content.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class AppNavigationBar extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const AppNavigationBar());
+
   const AppNavigationBar({super.key});
 
   @override
@@ -15,12 +18,19 @@ class AppNavigationBar extends StatefulWidget {
 
 class _AppNavigationBarState extends State<AppNavigationBar> {
   int _currentIndex = 0;
+
   final List<Widget> _pages = [
     HomeContent(),
     FriendsScreen(),
     GroupsScreen(),
     AccountScreen(),
   ];
+  void navidationToScreen(int index) {
+    setState(() {
+      _currentIndex = index; // Set the index for the GroupsScreen
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
