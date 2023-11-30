@@ -32,6 +32,22 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     _serviceChargeController.dispose();
   }
 
+  DateTime? _selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +62,13 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
+                    ElevatedButton.icon(
+                      onPressed: () => _selectDate(context),
+                      icon: Icon(Icons.calendar_today),
+                      label: Text(_selectedDate == null
+                          ? 'Select Date'
+                          : 'Selected Date: ${_selectedDate.toString().substring(0, 10)}'),
+                    ),
                     ExpenseForm(
                       formKey: _formKey,
                       amountController: _amountController,

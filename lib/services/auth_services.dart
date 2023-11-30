@@ -29,7 +29,7 @@ class AuthService {
           phone: phone);
 
       http.Response res = await http.post(
-        Uri.parse('${ServerConstants.serverUrl}${ServerConstants.signupUrl}'),
+        Uri.parse(ServerConstants.signupUrl),
         body: user.toJson(),
         headers: RequestHeaders.getUnAuthenticatedHeaders(),
       );
@@ -62,7 +62,7 @@ class AuthService {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
 
       http.Response response = await http.post(
-        Uri.parse('${ServerConstants.serverUrl}${ServerConstants.signinUrl}'),
+        Uri.parse(ServerConstants.signinUrl),
         body: jsonEncode({
           'email': email,
           'password': password,

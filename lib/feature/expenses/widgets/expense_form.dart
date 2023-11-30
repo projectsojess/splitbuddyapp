@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_field.dart';
-import 'package:splitbuddy/themes/theme.dart';
 
 class ExpenseForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;

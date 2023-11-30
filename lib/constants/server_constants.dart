@@ -1,6 +1,7 @@
 class ServerConstants {
-  static const String serverUrl = 'http://localhost:8800';
+  static const String _serverUrl = 'http://localhost:8800';
 
-  static const String signupUrl = '/api/users/create-user';
-  static const String signinUrl = '/api/users//log-in';
+  static const String signupUrl = '$_serverUrl/api/users/create-user';
+  static const String signinUrl = '$_serverUrl/api/users//log-in';
+  static const String addFriendUrl = '$_serverUrl/api/friends/add-friend';
 }

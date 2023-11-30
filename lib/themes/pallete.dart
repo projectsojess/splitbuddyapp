@@ -9,4 +9,5 @@ class Pallete {
   static const authIconsColor = Colors.white;
   static const primaryColor = Color(0xFF161616);
   static const secondaryColor = Color(0xFFed7501);
+  static const cursorColor = Color(0xFFed7501);
 }

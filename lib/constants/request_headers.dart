@@ -10,4 +10,8 @@ class RequestHeaders {
       CONTENT_TYPE_HEADER: JSON_TYPE,
     };
   }
+
+  static Map<String, String> getAuthenticatedHeaders({token}) {
+    return <String, String>{CONTENT_TYPE_HEADER: JSON_TYPE, JWT_HEADER: token};
+  }
 }
