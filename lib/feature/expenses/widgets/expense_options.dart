@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:splitbuddy/feature/expenses/widgets/share_type_field.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseOptions extends StatefulWidget {
   final ValueChanged<int> onPaidByChanged;
   final ValueChanged<String> onSplitTypeChanged;
   final Function(DateTime selectedDate) onDateSelected;
-  final TextEditingController shareController;
+  final Map<int, TextEditingController> shareControllers;
   final Map<int, String> paidByOptions;
 
   const ExpenseOptions(
@@ -13,7 +14,7 @@ class ExpenseOptions extends StatefulWidget {
       required this.onPaidByChanged,
       required this.onSplitTypeChanged,
       required this.onDateSelected,
-      required this.shareController,
+      required this.shareControllers,
       required this.paidByOptions});
 
   @override
@@ -67,7 +68,7 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
                   value: entry.key,
                   child: Text(
                     entry.value,
-                    style: TextStyle(color: Colors.orange),
+                    style: TextStyle(color: Pallete.inputLabelTextColor),
                   ),
                 );
               }).toList(),
@@ -99,40 +100,27 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
             IconButton(
               icon: Icon(Icons.calendar_today),
               onPressed: () => _selectDate(context),
-              color: Colors.orange, // Orange color for the icon
+              color: Pallete.secondaryColor, // Orange color for the icon
             ),
           ],
         ),
         if (_splitType != 'E') ...[
-          SizedBox(height: 10), // Add some space between lines
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Center(
-                child: Container(
-                  width: 60, // Width of the input field
-                  child: TextField(
-                    textAlign: TextAlign.center, // Center align text
-                    keyboardType: TextInputType.number,
-                    cursorColor: Colors.orange,
-                    decoration: InputDecoration(
-                      hintText: _splitType == 'P' ? ' %' : 'No.',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.orange), // Orange underline border
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors
-                                .orange), // Orange highlight border when selected
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          SizedBox(height: 10),
+          // Add some space between lines
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.paidByOptions.entries.map((entry) {
+              int key = entry.key;
+              String value = entry.value;
+              TextEditingController controller = widget.shareControllers[key]!;
+              IconData icon = _splitType == 'P' ? Icons.percent : Icons.share;
+              return ShareTypeField(
+                  controller: controller,
+                  name: value,
+                  shareType: _splitType,
+                  icon: icon);
+            }).toList(),
+          )
         ],
       ],
     );

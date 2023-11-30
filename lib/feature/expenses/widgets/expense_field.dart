@@ -5,13 +5,15 @@ class ExpenseField extends StatelessWidget {
   final TextEditingController editingController;
   final IconData icon;
   final String label;
+  final String? hintText;
   final String? Function(String?)? validator;
   const ExpenseField(
       {super.key,
       required this.editingController,
       required this.icon,
       required this.validator,
-      required this.label});
+      required this.label,
+      this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,12 @@ class ExpenseField extends StatelessWidget {
             validator: validator,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
+              hintText: hintText,
               labelText: label,
+              hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic),
               enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                 color: Pallete.inputLabelTextColor,
