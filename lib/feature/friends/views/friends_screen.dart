@@ -4,6 +4,9 @@ import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
 import 'package:splitbuddy/feature/friends/views/friend_detail_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
+import 'package:splitbuddy/services/friends_service.dart';
+import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/theme.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -16,6 +19,14 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendScreenState extends State<FriendsScreen> {
+  FriendsService service = FriendsService();
+  @override
+  void initState() {
+    super.initState();
+    service.getFriends(
+        context: context, userId: SharedPreferenceService.getInt('userId'));
+  }
+
   @override
   Widget build(BuildContext context) {
     var friendsProvider = Provider.of<FriendsProvider>(context);

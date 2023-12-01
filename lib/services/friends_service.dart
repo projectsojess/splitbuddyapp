@@ -32,4 +32,23 @@ class FriendsService {
       showSnackbar(context, e.toString());
     }
   }
+
+  void getFriends({required context, required userId}) async {
+    try {
+      var friendsProvider =
+          Provider.of<FriendsProvider>(context, listen: false);
+      http.Response response = await http.get(
+        Uri.parse(ServerConstants.getFriendsUrl),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token),
+      );
+      httpErrorHandle(
+          response: response,
+          context: context,
+          onSuccess: () {
+            friendsProvider.addAllFriends(response.body);
+          });
+    } catch (e) {
+      throw Exception('Failed to load data');
+    }
+  }
 }

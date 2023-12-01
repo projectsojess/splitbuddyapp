@@ -12,7 +12,21 @@ class FriendsProvider extends ChangeNotifier {
   }
 
   void addAllFriends(String jsonString) {
-    friends.addAll(FriendResponse.friendResponseListFromJson(jsonString));
+    List<FriendResponse> friendsResponse =
+        FriendResponse.friendResponseListFromJson(jsonString);
+    if (_friends.isNotEmpty) {
+      if (friendsResponse.isNotEmpty) {
+        friendsResponse.forEach((res) {
+          bool found = _friends
+              .any((friend) => friend.userToFriendId == res.userToFriendId);
+          if (!found) {
+            _friends.add(res);
+          }
+        });
+      }
+    } else {
+      _friends.addAll(friendsResponse);
+    }
     notifyListeners();
   }
 

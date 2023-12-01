@@ -77,6 +77,8 @@ class AuthService {
             userProvider.setUser(response.body);
             await SharedPreferenceService.setString(
                 RequestHeaders.JWT_HEADER, jsonDecode(response.body)['token']);
+            await SharedPreferenceService.setInt(
+                'userId', userProvider.user.userId);
             Navigator.push(context, HomeScreen.route());
           });
     } catch (e) {
