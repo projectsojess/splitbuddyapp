@@ -7,7 +7,7 @@ class FriendsProvider extends ChangeNotifier {
   List<FriendResponse> get friends => _friends;
 
   void addFriend(String friend) {
-    friends.add(FriendResponse.fromJson(friend));
+    _friends.add(FriendResponse.fromJson(friend));
     notifyListeners();
   }
 

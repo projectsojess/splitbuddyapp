@@ -4,7 +4,6 @@ import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
 import 'package:splitbuddy/feature/friends/views/friend_detail_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
-import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/friends_service.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/theme.dart';

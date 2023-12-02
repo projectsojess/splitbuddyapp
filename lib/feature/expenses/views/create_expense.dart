@@ -33,11 +33,11 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   String _splitType = 'E'; // Default split type is equally
   DateTime _selectedDate = DateTime.now(); // Default selected date
   int _payee = 0;
-
   Map<int, TextEditingController> _shareControllers = {};
 
   void handlePaidByChanged(int newValue) {
     setState(() {
+      _payee = _paidBy;
       _paidBy = newValue;
     });
   }
@@ -45,7 +45,6 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   void handleSplitTypeChanged(String newValue) {
     setState(() {
       _splitType = newValue;
-      _payee = widget.friend[0].userToFriendId;
     });
   }
 
@@ -133,7 +132,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
       paidBy: _paidBy,
       payee: _payee,
       type: _splitType,
-      date: _selectedDate,
+      date: _selectedDate.toIso8601String(),
       description: description,
       shareDistribution: shareDistribution,
       totalShares: totalshares,
@@ -148,14 +147,14 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
     _paidBy = user.userId;
-    _payee = widget.friend[0].userToFriendId;
+    _payee = widget.friend[0].friendId;
     // Obtain the current user ID from the provider
     int currentUserId = user.userId;
 
     // Create the map with the first entry (current user ID) and second entry (from object)
     final Map<int, String> paidByOptions = {
       currentUserId: 'You',
-      widget.friend[0].userToFriendId: widget.friend[0].name,
+      widget.friend[0].friendId: widget.friend[0].name,
     };
     _shareControllers = {
       for (var key in paidByOptions.keys) key: TextEditingController()

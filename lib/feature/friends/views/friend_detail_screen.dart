@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/expenses.dart';
+import 'package:provider/provider.dart';
+import 'package:splitbuddy/dtos/create_expense_response.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
+import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class FriendDetailScreen extends StatefulWidget {
@@ -15,10 +17,12 @@ class FriendDetailScreen extends StatefulWidget {
 }
 
 class _FriendDetailScreenState extends State<FriendDetailScreen> {
-  List<Expense> expenses = [];
+  List<CreateExpenseResponse> expenses = [];
   @override
   Widget build(BuildContext context) {
     final List<FriendResponse> friends = [widget.friend];
+    List<CreateExpenseResponse> expenses =
+        Provider.of<ExpensesProvider>(context).expenses;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.friend.name),
@@ -39,7 +43,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
           : ListView.builder(
               itemCount: expenses.length,
               itemBuilder: (context, index) {
-                Expense expense = expenses[index];
+                CreateExpenseResponse expense = expenses[index];
                 String formattedDate =
                     '${expense.date.month}/${expense.date.day}';
                 return Dismissible(

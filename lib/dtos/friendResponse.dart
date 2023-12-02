@@ -29,16 +29,16 @@ class FriendResponse {
   }
 
   factory FriendResponse.fromMap(Map<String, dynamic> map) {
-    dynamic amountValue = double.tryParse(map['amount']) ?? 0.0;
-    double parsedAmount =
-        amountValue is int ? amountValue.toDouble() : amountValue as double;
+    // dynamic amountValue = double.tryParse(map['amount']) ?? 0.0;
+    // double parsedAmount =
+    //     amountValue is int ? amountValue.toDouble() : amountValue as double;
     return FriendResponse(
       userToFriendId: map['userToFriendId'] as int,
       userId: map['userId'] as int,
       friendId: map['friendId'] as int,
       icon: map['icon'] as String,
       name: map['name'] as String,
-      amount: parsedAmount,
+      amount: map['amount'] as double,
     );
   }
 
