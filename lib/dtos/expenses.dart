@@ -1,22 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:splitbuddy/dtos/payee.dart';
+import 'package:splitbuddy/dtos/payer_payee.dart';
 
 class Expense {
-  final int paidBy;
   final String date;
+  final int userToFriendId;
   final String description;
-  final List<Payee> payees;
+  final List<PayerPayee> payerPayees;
   double? tax;
   double? serviceCharge;
   double? untaxedAmount;
   double? totalAmount;
 
   Expense({
-    required this.paidBy,
+    required this.userToFriendId,
     required this.date,
-    required this.payees,
+    required this.payerPayees,
     required this.description,
     this.tax,
     this.serviceCharge,
@@ -26,10 +26,10 @@ class Expense {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      'paidBy': paidBy,
-      'payees': payees.map((e) => e.toMap()).toList(),
+      'payerPayees': payerPayees.map((e) => e.toMap()).toList(),
       'date': date,
       'description': description,
+      'userToFriendId': userToFriendId,
     };
     if (tax != 0) {
       map['tax'] = tax;

@@ -48,6 +48,7 @@ class FriendsService {
             friendsProvider.addAllFriends(response.body);
           });
     } catch (e) {
+      print(e);
       throw Exception('Failed to load data');
     }
   }

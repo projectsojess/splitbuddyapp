@@ -33,6 +33,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   String _splitType = 'E'; // Default split type is equally
   DateTime _selectedDate = DateTime.now(); // Default selected date
   int _payee = 0;
+  int _userToFriendId = 0;
   Map<int, TextEditingController> _shareControllers = {};
 
   void handlePaidByChanged(int newValue) {
@@ -129,8 +130,9 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     }
     service.createExpenseNormal(
       context: context,
-      paidBy: _paidBy,
-      payee: _payee,
+      payerId: _paidBy,
+      payeeId: _payee,
+      userToFriendId: _userToFriendId,
       type: _splitType,
       date: _selectedDate.toIso8601String(),
       description: description,
@@ -148,6 +150,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     final user = Provider.of<UserProvider>(context).user;
     _paidBy = user.userId;
     _payee = widget.friend[0].friendId;
+    _userToFriendId = widget.friend[0].userToFriendId;
     // Obtain the current user ID from the provider
     int currentUserId = user.userId;
 

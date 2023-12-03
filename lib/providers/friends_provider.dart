@@ -18,8 +18,17 @@ class FriendsProvider extends ChangeNotifier {
       if (friendsResponse.isNotEmpty) {
         friendsResponse.forEach((res) {
           bool found = _friends
-              .any((friend) => friend.userToFriendId == res.userToFriendId);
-          if (!found) {
+              .any((element) => element.userToFriendId == res.userToFriendId);
+
+          if (found) {
+            FriendResponse friend = _friends.firstWhere(
+                (element) => element.userToFriendId == res.userToFriendId);
+
+            if (friend.amount != res.amount) {
+              friend.owed = res.owed;
+              friend.amount = res.amount;
+            }
+          } else {
             _friends.add(res);
           }
         });

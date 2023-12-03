@@ -7,10 +7,12 @@ class FriendResponse {
   final int friendId;
   final String icon;
   final String name;
-  final double amount;
+  bool owed;
+  double amount;
 
   FriendResponse(
       {required this.userToFriendId,
+      required this.owed,
       required this.userId,
       required this.friendId,
       required this.icon,
@@ -24,6 +26,7 @@ class FriendResponse {
       'friendId': friendId,
       'icon': icon,
       'name': name,
+      'owed': owed,
       'amount': amount,
     };
   }
@@ -33,11 +36,12 @@ class FriendResponse {
     // double parsedAmount =
     //     amountValue is int ? amountValue.toDouble() : amountValue as double;
     return FriendResponse(
+      owed: map['owed'] as bool,
+      name: map['name'] as String,
       userToFriendId: map['userToFriendId'] as int,
       userId: map['userId'] as int,
       friendId: map['friendId'] as int,
       icon: map['icon'] as String,
-      name: map['name'] as String,
       amount: map['amount'] as double,
     );
   }

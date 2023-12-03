@@ -6,7 +6,7 @@ import 'package:splitbuddy/common/common.dart';
 import 'package:http/http.dart' as http;
 import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
-import 'package:splitbuddy/dtos/payee.dart';
+import 'package:splitbuddy/dtos/payer_payee.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
@@ -15,11 +15,12 @@ class ExpenseService {
 
   void createExpenseNormal({
     required BuildContext context,
-    required int paidBy,
-    required int payee,
+    required int payerId,
+    required int payeeId,
     required String type,
     required String date,
     required String description,
+    required int userToFriendId,
     Map<int, double>? shareDistribution,
     int? totalShares,
     double? tax,
@@ -30,34 +31,40 @@ class ExpenseService {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
     try {
       double shareAmount = 0;
+      double shareValue = 0;
       if (type == 'E') {
         shareAmount = totalAmount! / 2;
       } else if (type == 'P') {
         if (shareDistribution != null) {
-          double shareP = shareDistribution[payee]!;
-          shareAmount = (totalAmount! * shareP) / 100;
+          shareValue = shareDistribution[payeeId]!;
+          shareAmount = (totalAmount! * shareValue) / 100;
         }
       } else if (type == 'S') {
         if (shareDistribution != null) {
-          double shareS = shareDistribution[payee]!;
-          shareAmount = (totalAmount! * shareS) / totalShares!;
+          shareValue = shareDistribution[payeeId]!;
+          shareAmount = (totalAmount! * shareValue) / totalShares!;
         }
       }
-      Payee payeeU = Payee(
-          payeeId: payee,
+      PayerPayee payee = PayerPayee(
+          id: payeeId,
+          type: "P",
           shareType: type,
+          shareValue: shareValue,
           totalShares: totalShares,
-          payeeShare: shareAmount);
-      Payee payeeF = Payee(
-          payeeId: paidBy,
-          shareType: type,
-          totalShares: totalShares,
-          payeeShare: totalAmount! - shareAmount);
+          share: shareAmount);
 
-      List<Payee> payees = [payeeU, payeeF];
+      PayerPayee payer = PayerPayee(
+          id: payerId,
+          type: "PA",
+          shareType: type,
+          shareValue: shareValue,
+          totalShares: totalShares,
+          payedAmount: totalAmount!,
+          share: totalAmount - shareAmount);
+      List<PayerPayee> payerPayee = [payer, payee];
       Expense expenseRequest = Expense(
-        paidBy: paidBy,
-        payees: payees,
+        userToFriendId: userToFriendId,
+        payerPayees: payerPayee,
         date: date,
         description: description,
         tax: tax,
