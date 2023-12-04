@@ -7,6 +7,7 @@ import 'package:splitbuddy/dtos/expense_payer.dart';
 
 class CreateExpenseResponse {
   final int expenseId;
+  final int? userToFriendId;
   final int? groupId;
   final int userId;
   final String createdBy;
@@ -21,6 +22,7 @@ class CreateExpenseResponse {
   CreateExpenseResponse(
       {required this.expenseId,
       this.groupId,
+      this.userToFriendId,
       required this.userId,
       required this.createdBy,
       required this.date,
@@ -35,6 +37,7 @@ class CreateExpenseResponse {
     return <String, dynamic>{
       'expenseId': expenseId,
       'groupId': groupId,
+      'userToFriendId': userToFriendId,
       'userId': userId,
       'createdBy': createdBy,
       'date': date.toIso8601String(),
@@ -51,6 +54,8 @@ class CreateExpenseResponse {
     return CreateExpenseResponse(
       expenseId: map['expenseId'] as int,
       groupId: map['groupId'] != null ? map['groupId'] as int : 0,
+      userToFriendId:
+          map['userToFriendId'] != null ? map['userToFriendId'] as int : 0,
       userId: map['userId'] as int,
       createdBy: map['createdBy'] as String,
       date: DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(map['date']),
@@ -74,11 +79,25 @@ class CreateExpenseResponse {
       CreateExpenseResponse.fromMap(
           json.decode(source) as Map<String, dynamic>);
 
-  static List<CreateExpenseResponse> createExpenseResponseListFromJson(
+  static List<CreateExpenseResponse> expensesFriendsListFromJson(
       String response) {
-    final parsed = json.decode(response).cast<Map<String, dynamic>>();
+    final parsed =
+        json.decode(response)['userToFriends'].cast<Map<String, dynamic>>();
 
-    return parsed.map<CreateExpenseResponse>(
-        (json) => CreateExpenseResponse.fromMap(json));
+    return parsed
+        .map<CreateExpenseResponse>(
+            (json) => CreateExpenseResponse.fromMap(json))
+        .toList();
+  }
+
+  static List<CreateExpenseResponse> expensesGroupsListFromJson(
+      String response) {
+    final parsed =
+        json.decode(response)['userToGroups'].cast<Map<String, dynamic>>();
+
+    return parsed
+        .map<CreateExpenseResponse>(
+            (json) => CreateExpenseResponse.fromMap(json))
+        .toList();
   }
 }

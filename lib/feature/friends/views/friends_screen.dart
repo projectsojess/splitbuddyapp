@@ -71,6 +71,8 @@ class _FriendScreenState extends State<FriendsScreen> {
               itemCount: friendsProvider.friends.length,
               itemBuilder: (context, index) {
                 final FriendResponse friend = friendsProvider.friends[index];
+                final String prefix =
+                    friend.owed || friend.amount == 0 ? 'Owes ' : "You owe ";
                 return ListTile(
                   leading: CircleAvatar(
                     // You can set profile images here
@@ -78,7 +80,12 @@ class _FriendScreenState extends State<FriendsScreen> {
                   ),
                   title: Text(friend.name),
                   trailing: Text(
-                    '\$${friend.amount.toString()}',
+                    '${prefix}\$ ${friend.amount.toString()}',
+                    style: TextStyle(
+                      color: friend.owed || friend.amount == 0
+                          ? Colors.green
+                          : Colors.red,
+                    ),
                   ),
                   onTap: () {
                     Navigator.push(

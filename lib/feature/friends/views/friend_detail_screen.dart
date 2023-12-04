@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/create_expense_response.dart';
+import 'package:splitbuddy/dtos/expense_payee.dart';
+import 'package:splitbuddy/dtos/expense_payer.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
+import 'package:splitbuddy/feature/expenses/widgets/expense_tile.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class FriendDetailScreen extends StatefulWidget {
@@ -18,11 +23,24 @@ class FriendDetailScreen extends StatefulWidget {
 
 class _FriendDetailScreenState extends State<FriendDetailScreen> {
   List<CreateExpenseResponse> expenses = [];
+
+  ExpenseService service = ExpenseService();
+
+  @override
+  void initState() {
+    super.initState();
+    service.getAllExpenses(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<FriendResponse> friends = [widget.friend];
     List<CreateExpenseResponse> expenses =
-        Provider.of<ExpensesProvider>(context).expenses;
+        Provider.of<ExpensesProvider>(context)
+            .expensesFriends
+            .where((element) =>
+                element.userToFriendId == widget.friend.userToFriendId)
+            .toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.friend.name),
@@ -46,8 +64,14 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                 CreateExpenseResponse expense = expenses[index];
                 String formattedDate =
                     '${expense.date.month}/${expense.date.day}';
+                ExpensePayer payer = expense.payer;
+                List<ExpensePayee> payee = expense.payees;
+                bool isFriendPayer = payer.payerId == widget.friend.friendId;
+                Color color = isFriendPayer ? Colors.red : Colors.green;
+                String prefix = isFriendPayer ? "You owes " : "Owes ";
                 return Dismissible(
-                  key: Key(expense.description), // Unique key for each item
+                  key: Key(
+                      expense.expenseId.toString()), // Unique key for each item
                   background: Container(
                     color: Colors.red,
                     child: Icon(Icons.delete, color: Colors.white),
@@ -63,24 +87,12 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                           content: Text('${expense.description} dismissed')),
                     );
                   },
-                  child: ListTile(
-                    leading: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(formattedDate),
-                        Icon(Icons.food_bank),
-                      ],
-                    ),
-                    title: Text(expense.description),
-                    trailing: Text(
-                      '\$${expense.totalAmount}',
-                      style: TextStyle(
-                        color: expense.totalAmount! < 0.0
-                            ? Colors.red
-                            : Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  child: ExpenseTile(
+                    color: color,
+                    expense: expense,
+                    payer: payer,
+                    payee: payee,
+                    isFriendPayer: isFriendPayer,
                   ),
                 );
               },

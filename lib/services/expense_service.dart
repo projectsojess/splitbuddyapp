@@ -74,7 +74,7 @@ class ExpenseService {
       );
 
       http.Response response = await http.post(
-          Uri.parse(ServerConstants.addExpenseNormal),
+          Uri.parse(ServerConstants.addExpenseNormalUrl),
           body: expenseRequest.toJson(),
           headers: RequestHeaders.getAuthenticatedHeaders(token: token));
 
@@ -89,5 +89,24 @@ class ExpenseService {
       throw e;
       // showSnackbar(context, e.toString());
     }
+  }
+
+  void getAllExpenses({required context}) async {
+    try {
+      var expenseProvider =
+          Provider.of<ExpensesProvider>(context, listen: false);
+
+      http.Response response = await http.get(
+        Uri.parse(ServerConstants.getExpensesUrl),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token),
+      );
+
+      httpErrorHandle(
+          response: response,
+          context: context,
+          onSuccess: () async {
+            expenseProvider.addAllExpenses(response.body);
+          });
+    } catch (e) {}
   }
 }
