@@ -16,6 +16,16 @@ class SharedPreferenceService {
     return _prefs!.setString(key, value);
   }
 
+  static int getInt(String key, {int defaultValue = 0}) {
+    _ensureInitializedSync();
+    return _prefs!.getInt(key) ?? defaultValue;
+  }
+
+  static Future<bool> setInt(String key, int value) async {
+    await _ensureInitialized();
+    return _prefs!.setInt(key, value);
+  }
+
   static String getString(String key, {String defaultValue = ''}) {
     _ensureInitializedSync();
     return _prefs!.getString(key) ?? defaultValue;

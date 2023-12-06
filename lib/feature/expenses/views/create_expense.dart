@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splitbuddy/dtos/friendResponse.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
+import 'package:splitbuddy/services/expense_service.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
 
 import '../widgets/widgets.dart';
 
 class CreateExpenseNormal extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const CreateExpenseNormal());
-  const CreateExpenseNormal({super.key});
+  final List<FriendResponse> friend;
+
+  static route({required List<FriendResponse> friend}) => MaterialPageRoute(
+      builder: (context) => CreateExpenseNormal(friend: friend));
+
+  const CreateExpenseNormal({super.key, required this.friend});
 
   @override
   State<CreateExpenseNormal> createState() => _CreateExpenseNormalState();
@@ -22,6 +30,59 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   final TextEditingController _serviceChargeController =
       TextEditingController();
 
+  int _paidBy = 0; // Default paid by yourself
+  String _splitType = 'E'; // Default split type is equally
+  DateTime _selectedDate = DateTime.now(); // Default selected date
+  int _payee = 0;
+  int _userToFriendId = 0;
+  Map<int, TextEditingController> _shareControllers = {};
+
+  late Map<int, String> paidByOptions = {};
+  void handlePaidByChanged(int newValue) {
+    setState(() {
+      _payee = _paidBy;
+      _paidBy = newValue;
+    });
+  }
+
+  void handleSplitTypeChanged(String newValue) {
+    setState(() {
+      _splitType = newValue;
+    });
+  }
+
+  void handleDateSelected(DateTime selectedDate) {
+    setState(() {
+      _selectedDate = selectedDate;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController.addListener(_calculateUntaxedAmount);
+    _taxController.addListener(_calculateUntaxedAmount);
+    _serviceChargeController.addListener(_calculateUntaxedAmount);
+
+    int userId = SharedPreferenceService.getInt("userId");
+
+    _paidBy = userId;
+    _payee = widget.friend[0].friendId;
+    _userToFriendId = widget.friend[0].userToFriendId;
+
+    // Obtain the current user ID from the provider
+    int currentUserId = userId;
+
+    // Create the map with the first entry (current user ID) and second entry (from object)
+    paidByOptions = {
+      _paidBy: 'You',
+      _payee: widget.friend[0].name,
+    };
+    _shareControllers = {
+      for (var key in paidByOptions.keys) key: TextEditingController()
+    };
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -30,22 +91,78 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     _untaxedAmountController.dispose();
     _taxController.dispose();
     _serviceChargeController.dispose();
+    _shareControllers.forEach((key, controller) {
+      controller.dispose();
+    });
+
+    _amountController.removeListener(_calculateUntaxedAmount);
+    _taxController.removeListener(_calculateUntaxedAmount);
+    _serviceChargeController.removeListener(_calculateUntaxedAmount);
   }
 
-  DateTime? _selectedDate;
+  void _calculateUntaxedAmount() {
+    final totalAmount = double.tryParse(_amountController.text) ?? 0.0;
+    final tax = double.tryParse(_taxController.text) ?? 0.0;
+    final serviceCharge = double.tryParse(_serviceChargeController.text) ?? 0.0;
+    if (_showErrorForTax(tax)) {
+      return;
+    }
+    if (tax != 0.0 && serviceCharge != 0.0) {
+      double untaxedAmount = totalAmount / (1 + ((tax + serviceCharge) / 100));
+      _untaxedAmountController.text = untaxedAmount.toStringAsFixed(2);
+    } else if (tax != 0.0) {
+      double untaxedAmount = totalAmount / (1 + (tax / 100));
+      _untaxedAmountController.text = untaxedAmount.toStringAsFixed(2);
+    }
+  }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
+  bool _showErrorForTax(tax) {
+    final currentamount = _amountController.text;
+    if (currentamount.isNotEmpty && currentamount != '0') {
+      if (tax == 0.0) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please enter a valid value in the Tax field.'),
+        ));
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  ExpenseService service = ExpenseService();
+  void addExpense() {
+    final double amount = double.tryParse(_amountController.text) ?? 0.0;
+    final String description = _descriptionController.text;
+    final double untaxedAmount =
+        double.tryParse(_untaxedAmountController.text) ?? 0.0;
+    final double tax = double.tryParse(_taxController.text) ?? 0.0;
+    final double serviceCharge =
+        double.tryParse(_serviceChargeController.text) ?? 0.0;
+    int totalshares = 0;
+    Map<int, double>? shareDistribution = {};
+    if (_splitType == 'S' || _splitType == 'P') {
+      _shareControllers.forEach((key, value) {
+        double val = double.tryParse(value.text) ?? 0.0;
+        totalshares += val.round();
+        shareDistribution[key] = val;
       });
     }
+    service.createExpenseNormal(
+      context: context,
+      payerId: _paidBy,
+      payeeId: _payee,
+      userToFriendId: _userToFriendId,
+      type: _splitType,
+      date: _selectedDate.toIso8601String(),
+      description: description,
+      shareDistribution: shareDistribution,
+      totalShares: totalshares,
+      tax: tax,
+      untaxedAmount: untaxedAmount,
+      serviceCharge: serviceCharge,
+      totalAmount: amount,
+    );
   }
 
   @override
@@ -53,7 +170,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Create Normal Expense',
+            'Split a Bill - Normal',
           ),
         ),
         body: Center(
@@ -62,12 +179,15 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () => _selectDate(context),
-                      icon: Icon(Icons.calendar_today),
-                      label: Text(_selectedDate == null
-                          ? 'Select Date'
-                          : 'Selected Date: ${_selectedDate.toString().substring(0, 10)}'),
+                    ExpenseOptions(
+                      onPaidByChanged: handlePaidByChanged,
+                      onSplitTypeChanged: handleSplitTypeChanged,
+                      onDateSelected: handleDateSelected,
+                      shareControllers: _shareControllers,
+                      paidByOptions: paidByOptions,
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     ExpenseForm(
                       formKey: _formKey,
@@ -78,7 +198,8 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                       serviceChargeController: _serviceChargeController,
                     ),
                     SizedBox(height: 20),
-                    ElevatedButton(
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.add),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.orange,
                         onPrimary: Colors.white,
@@ -86,28 +207,11 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           // Perform your submission logic here
-                          final double amount =
-                              double.tryParse(_amountController.text) ?? 0.0;
-                          final String description =
-                              _descriptionController.text;
-                          final double untaxedAmount =
-                              double.tryParse(_untaxedAmountController.text) ??
-                                  0.0;
-                          final double tax =
-                              double.tryParse(_taxController.text) ?? 0.0;
-                          final double serviceCharge =
-                              double.tryParse(_serviceChargeController.text) ??
-                                  0.0;
-
+                          addExpense();
                           // Handle the submitted data as needed
-                          print('Amount: $amount');
-                          print('Description: $description');
-                          print('Untaxed Amount: $untaxedAmount');
-                          print('Tax: $tax%');
-                          print('Service Charge: $serviceCharge%');
                         }
                       },
-                      child: Text('Submit'),
+                      label: Text('Add '),
                     ),
                   ],
                 )),

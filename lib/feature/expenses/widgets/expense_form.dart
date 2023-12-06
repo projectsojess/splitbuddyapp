@@ -50,6 +50,7 @@ class ExpenseForm extends StatelessWidget {
           SizedBox(height: 20),
           ExpenseField(
             editingController: serviceChargeController,
+            hintText: '(Optional)',
             icon: Icons.calculate,
             validator: (value) {
               return null;

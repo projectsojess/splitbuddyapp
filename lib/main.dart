@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/feature/welcome_page.dart';
+import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/themes/app_theme.dart';
@@ -10,6 +11,7 @@ void main() {
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => FriendsProvider()),
+      ChangeNotifierProvider(create: (_) => ExpensesProvider()),
     ],
     child: const MyApp(),
   ));

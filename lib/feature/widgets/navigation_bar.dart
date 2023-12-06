@@ -37,7 +37,7 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
       body: _pages[_currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, CreateExpenseNormal.route());
+          // Navigator.push(context, CreateExpenseNormal.route());
         },
         child: Icon(
           Icons.add,
