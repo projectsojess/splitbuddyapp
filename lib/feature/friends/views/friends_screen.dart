@@ -22,8 +22,7 @@ class _FriendScreenState extends State<FriendsScreen> {
   @override
   void initState() {
     super.initState();
-    service.getFriends(
-        context: context, userId: SharedPreferenceService.getInt('userId'));
+    service.getFriends(context: context);
   }
 
   @override

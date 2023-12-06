@@ -24,10 +24,13 @@ class ExpenseOptions extends StatefulWidget {
 class _ExpenseOptionsState extends State<ExpenseOptions> {
   // Default paid by yourself
   String _splitType = 'E'; // Default split type is equally
+  int _paidBy = 0;
 
   DateTime _selectedDate = DateTime.now(); // Store selected date
 
   late Map<String, String> _shareTypeOptions;
+
+  Map<int, String> _paidByOptions = {};
   @override
   void initState() {
     super.initState();
@@ -37,11 +40,12 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
       'P': 'Percentage',
       'S': 'No of shares'
     };
+    _paidByOptions = widget.paidByOptions;
+    _paidBy = _paidByOptions.keys.first;
   }
 
   @override
   Widget build(BuildContext context) {
-    int _paidBy = widget.paidByOptions.keys.first;
     return Column(
       children: [
         Row(
@@ -62,14 +66,10 @@ class _ExpenseOptionsState extends State<ExpenseOptions> {
                   widget.onPaidByChanged(newValue);
                 });
               },
-              items: widget.paidByOptions.entries
-                  .map((MapEntry<int, String> entry) {
+              items: widget.paidByOptions.keys.map((int value) {
                 return DropdownMenuItem<int>(
-                  value: entry.key,
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(color: Pallete.inputLabelTextColor),
-                  ),
+                  value: value,
+                  child: Text(widget.paidByOptions[value]!),
                 );
               }).toList(),
             ),

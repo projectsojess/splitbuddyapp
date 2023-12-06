@@ -33,7 +33,7 @@ class FriendsService {
     }
   }
 
-  void getFriends({required context, required userId}) async {
+  void getFriends({required context}) async {
     try {
       var friendsProvider =
           Provider.of<FriendsProvider>(context, listen: false);

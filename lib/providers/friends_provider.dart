@@ -15,28 +15,28 @@ class FriendsProvider extends ChangeNotifier {
     List<FriendResponse> friendsResponse =
         FriendResponse.friendResponseListFromJson(jsonString);
     if (_friends.isNotEmpty) {
-      if (friendsResponse.isNotEmpty) {
-        friendsResponse.forEach((res) {
-          bool found = _friends
-              .any((element) => element.userToFriendId == res.userToFriendId);
+      friendsResponse.forEach((response) {
+        bool found =
+            _friends.any((e) => e.userToFriendId == response.userToFriendId);
 
-          if (found) {
-            FriendResponse friend = _friends.firstWhere(
-                (element) => element.userToFriendId == res.userToFriendId);
-
-            if (friend.amount != res.amount) {
-              friend.owed = res.owed;
-              friend.amount = res.amount;
+        if (found) {
+          _friends.forEach((friend) {
+            if ((friend.userToFriendId == response.userToFriendId) &&
+                (friend.amount != response.amount)) {
+              friend.amount = response.amount;
+              friend.owed = response.owed;
+              notifyListeners();
             }
-          } else {
-            _friends.add(res);
-          }
-        });
-      }
+          });
+        } else {
+          _friends.add(response);
+          notifyListeners();
+        }
+      });
     } else {
       _friends.addAll(friendsResponse);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void addAllFriendsFromModel(List<FriendResponse> friends) {

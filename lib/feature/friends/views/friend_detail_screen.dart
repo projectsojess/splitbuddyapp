@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/create_expense_response.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
@@ -44,6 +43,32 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.friend.name),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(
+              Icons.add, // Plus icon
+              color: Pallete.secondaryColor, // Set the color to orange
+            ),
+            onSelected: (value) {
+              switch (value) {
+                case 'addExpense':
+                  Navigator.push(
+                    context,
+                    CreateExpenseNormal.route(friend: friends),
+                  );
+                  break;
+                // Add more cases for other actions/screens
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'addExpense',
+                child: Text('Add Expense'),
+              ),
+              // Add more PopupMenuItems for other actions
+            ],
+          ),
+        ],
       ),
       body: expenses.isEmpty
           ? Center(

@@ -8,11 +8,12 @@ import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
 import 'package:splitbuddy/dtos/payer_payee.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/services/friends_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
   String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
-
+  FriendsService friendsService = FriendsService();
   void createExpenseNormal({
     required BuildContext context,
     required int payerId,
@@ -49,7 +50,7 @@ class ExpenseService {
           id: payeeId,
           type: "P",
           shareType: type,
-          shareValue: shareValue,
+          shareValue: double.parse(shareValue.toStringAsFixed(2)),
           totalShares: totalShares,
           share: shareAmount);
 
@@ -84,6 +85,7 @@ class ExpenseService {
           onSuccess: () async {
             expenseProvider.addExpense(response.body);
             Navigator.pop(context);
+            friendsService.getFriends(context: context);
           });
     } catch (e) {
       throw e;

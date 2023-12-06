@@ -20,6 +20,7 @@ class ExpensesProvider extends ChangeNotifier {
     } else {
       _expensesGroups.add(expenseResponse);
     }
+    notifyListeners();
   }
 
   void addAllExpenses(String jsonString) {
@@ -37,6 +38,7 @@ class ExpensesProvider extends ChangeNotifier {
           if (!found) {
             if (expense.userToFriendId != 0) {
               _expensesFriends.add(expense);
+              notifyListeners();
             }
           }
         });
@@ -45,6 +47,7 @@ class ExpensesProvider extends ChangeNotifier {
       expenseResponseListF.forEach((element) {
         if (element.userToFriendId != 0) {
           _expensesFriends.add(element);
+          notifyListeners();
         }
       });
     }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/expense_service.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
 
 import '../widgets/widgets.dart';
 
@@ -36,6 +37,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
   int _userToFriendId = 0;
   Map<int, TextEditingController> _shareControllers = {};
 
+  late Map<int, String> paidByOptions = {};
   void handlePaidByChanged(int newValue) {
     setState(() {
       _payee = _paidBy;
@@ -61,6 +63,24 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     _amountController.addListener(_calculateUntaxedAmount);
     _taxController.addListener(_calculateUntaxedAmount);
     _serviceChargeController.addListener(_calculateUntaxedAmount);
+
+    int userId = SharedPreferenceService.getInt("userId");
+
+    _paidBy = userId;
+    _payee = widget.friend[0].friendId;
+    _userToFriendId = widget.friend[0].userToFriendId;
+
+    // Obtain the current user ID from the provider
+    int currentUserId = userId;
+
+    // Create the map with the first entry (current user ID) and second entry (from object)
+    paidByOptions = {
+      _paidBy: 'You',
+      _payee: widget.friend[0].name,
+    };
+    _shareControllers = {
+      for (var key in paidByOptions.keys) key: TextEditingController()
+    };
   }
 
   @override
@@ -147,21 +167,6 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
-    _paidBy = user.userId;
-    _payee = widget.friend[0].friendId;
-    _userToFriendId = widget.friend[0].userToFriendId;
-    // Obtain the current user ID from the provider
-    int currentUserId = user.userId;
-
-    // Create the map with the first entry (current user ID) and second entry (from object)
-    final Map<int, String> paidByOptions = {
-      currentUserId: 'You',
-      widget.friend[0].friendId: widget.friend[0].name,
-    };
-    _shareControllers = {
-      for (var key in paidByOptions.keys) key: TextEditingController()
-    };
     return Scaffold(
         appBar: AppBar(
           title: Text(
