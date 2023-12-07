@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
-import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 

@@ -5,9 +5,11 @@ import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
+import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_tile.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/services/expense_service.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class FriendDetailScreen extends StatefulWidget {
@@ -21,14 +23,18 @@ class FriendDetailScreen extends StatefulWidget {
 }
 
 class _FriendDetailScreenState extends State<FriendDetailScreen> {
-  List<CreateExpenseResponse> expenses = [];
-
+  Map<int, String> users = {};
   ExpenseService service = ExpenseService();
 
   @override
   void initState() {
     super.initState();
     service.getAllExpenses(context: context);
+    int userId = SharedPreferenceService.getInt("userId");
+    users = {
+      userId: 'You',
+      widget.friend.friendId: widget.friend.name,
+    };
   }
 
   @override
@@ -57,6 +63,18 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                     CreateExpenseNormal.route(friend: friends),
                   );
                   break;
+                case 'advancedExpense':
+                  // Navigate to the advanced expense screen
+                  // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddItemScreen(
+                              users: users,
+                            )),
+                  );
+                  break;
+                // Add mor
                 // Add more cases for other actions/screens
               }
             },
@@ -64,6 +82,10 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
               const PopupMenuItem<String>(
                 value: 'addExpense',
                 child: Text('Add Expense'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'advancedExpense',
+                child: Text('Advanced Expense'),
               ),
               // Add more PopupMenuItems for other actions
             ],
