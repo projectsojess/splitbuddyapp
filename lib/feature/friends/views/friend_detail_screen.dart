@@ -71,6 +71,8 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                     MaterialPageRoute(
                         builder: (context) => AddItemScreen(
                               users: users,
+                              userToFriendId: friends[0].userToFriendId,
+                              fromScreen: 'FBA',
                             )),
                   );
                   break;

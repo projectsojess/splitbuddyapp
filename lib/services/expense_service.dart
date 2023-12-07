@@ -6,6 +6,8 @@ import 'package:splitbuddy/common/common.dart';
 import 'package:http/http.dart' as http;
 import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
+import 'package:splitbuddy/dtos/expenses_adv.dart';
+import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/dtos/payer_payee.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/services/friends_service.dart';
@@ -13,7 +15,8 @@ import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
   String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
-  FriendsService friendsService = FriendsService();
+  int userId = SharedPreferenceService.getInt('userId');
+  FriendsService _friendsService = FriendsService();
   void createExpenseNormal({
     required BuildContext context,
     required int payerId,
@@ -85,7 +88,7 @@ class ExpenseService {
           onSuccess: () async {
             expenseProvider.addExpense(response.body);
             Navigator.pop(context);
-            friendsService.getFriends(context: context);
+            _friendsService.getFriends(context: context);
           });
     } catch (e) {
       throw e;
@@ -110,5 +113,38 @@ class ExpenseService {
             expenseProvider.addAllExpenses(response.body);
           });
     } catch (e) {}
+  }
+
+  void addExpenseAdvanced({
+    required BuildContext context,
+    required int payerId,
+    required String date,
+    required String description,
+    required int userToFriendId,
+    required List<Item> items,
+    int? totalShares,
+    double? tax,
+    double? serviceCharge,
+    double? untaxedAmount,
+    double? totalAmount,
+  }) async {
+    ExpensesAdv expensesAdv = ExpensesAdv(
+      createdById: userId,
+      payerId: payerId,
+      date: date,
+      description: description,
+      type: 'FBA',
+      userToFriendId: userToFriendId,
+      tax: tax,
+      serviceCharge: serviceCharge,
+      untaxedAmount: untaxedAmount,
+      totalAmount: totalAmount,
+      items: items,
+    );
+
+    http.Response response = await http.post(
+        Uri.parse(ServerConstants.addExpenseNormalUrl),
+        body: expensesAdv.toJson(),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token));
   }
 }

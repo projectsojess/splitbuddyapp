@@ -1,25 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:splitbuddy/common/utils.dart';
 import 'package:splitbuddy/dtos/items.dart';
+import 'package:splitbuddy/feature/expenses/views/create_expense_adv.dart';
+import 'package:splitbuddy/feature/expenses/widgets/shares_dialogue.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class AddItemScreen extends StatefulWidget {
   final Map<int, String> users;
+  final int? userToFriendId;
+  final String fromScreen;
+  final int? groupId;
 
-  const AddItemScreen({super.key, required this.users});
+  const AddItemScreen(
+      {super.key,
+      required this.users,
+      this.groupId,
+      this.userToFriendId,
+      required this.fromScreen});
 
   @override
   _AddItemScreenState createState() => _AddItemScreenState();
 }
 
 class _AddItemScreenState extends State<AddItemScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late Map<String, String> _shareTypeOptions;
   List<Item> items = [];
+  int itemLength = 0;
 
   int _selectedUser = 0;
+
+  void addItem() {
+    setState(() {
+      items.add(Item(
+          name: '',
+          amount: 0,
+          usersInvolved: [],
+          totalShares: 0,
+          shareType: 'E',
+          shareValue: {}));
+    });
+  }
+
+  void _deleteItem(int index) {
+    setState(() {
+      items.removeAt(index);
+    });
+  }
 
   @override
   void initState() {
@@ -41,226 +70,285 @@ class _AddItemScreenState extends State<AddItemScreen> {
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.all(20),
-          child: Column(children: <Widget>[
-            SizedBox(height: 20),
-            for (int i = 0; i < items.length; i++)
-              Card(
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              onChanged: (value) {
-                                setState(() {
-                                  items[i].name = value;
-                                });
+          child: Form(
+            key: _formKey,
+            child: Column(children: <Widget>[
+              SizedBox(height: 20),
+              for (int i = 0; i < items.length; i++)
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                _deleteItem(i);
                               },
-                              decoration: InputDecoration(
-                                labelText: 'Item Name ${i + 1}',
-                              ),
+                              icon: Icon(Icons.clear),
+                              color: Colors.red,
                             ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              onChanged: (value) {
-                                setState(() {
-                                  items[i].amount = double.tryParse(value) ?? 0;
-                                });
-                              },
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'Amount ${i + 1}',
-                              ),
-                            ),
-                          ),
-
-                          // Additional fields for share options for each item
-                          // Similar to previous implementation
-                          // ...
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Payees',
-                            style: TextStyle(
-                              color: Pallete.inputLabelTextColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    child: MultiSelectChipField(
-                                      showHeader: false,
-                                      chipColor: Pallete.secondaryColor,
-                                      textStyle: TextStyle(
-                                          color: Pallete.inputLabelTextColor),
-                                      items: widget.users.keys.map((e) {
-                                        return MultiSelectItem<int?>(
-                                          e,
-                                          widget.users[e]!,
-                                        );
-                                      }).toList(),
-                                      onTap: (values) {
-                                        setState(() {
-                                          items[i].usersInvolved = values;
-                                          if (items[i].usersInvolved!.length <
-                                              2) {
-                                            items[i].shareType = 'E';
-                                          }
-                                          print(
-                                              'users:${items[i].usersInvolved}');
-                                        });
-                                      },
-                                    ),
-                                  ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a item name';
+                                  }
+                                  return null;
+                                },
+                                decoration: customInputFieldDecoration(
+                                    '', 'Item Name ${i + 1}'),
+                                onChanged: (value) {
+                                  setState(() {
+                                    items[i].name = value;
+                                  });
+                                },
+                                cursorColor: Pallete.secondaryColor,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'^[a-zA-Z0-9\s]*$')), // Allow letters, numbers, and spaces
                                 ],
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Type:',
-                            style: TextStyle(
-                              color: Pallete.inputLabelTextColor,
-                              fontWeight: FontWeight.bold,
+                            SizedBox(
+                              width: 10,
                             ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              value: items[i].shareType,
-                              onChanged: (newValue) {
-                                if (newValue != 'E' &&
-                                    items[i].usersInvolved!.length < 2) {
+                            Expanded(
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a amount';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
                                   setState(() {
-                                    items[i].shareType = 'E';
+                                    items[i].amount =
+                                        double.tryParse(value) ?? 0;
                                   });
-                                  showSnackbar(
-                                      context, 'add more than 1 payee');
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Enter Share Values'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            for (int? userId
-                                                in items[i].usersInvolved!)
-                                              TextFormField(
-                                                onChanged: (value) {
-                                                  // Implement logic to save share values for each user
-                                                  // For instance, you can update your 'Item' object
-                                                  // with the entered share values for each user involved
-                                                  // items[i].shareValue[userId] = double.tryParse(value) ?? 0;
-                                                },
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Share value for User $userId',
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('OK'),
-                                          ),
-                                        ],
+                                },
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'^\d+\.?\d{0,2}')), // Allow digits and decimal point with up to 2 decimal places
+                                  FilteringTextInputFormatter.deny(RegExp(
+                                      r'[^\d\.]+')), // Deny input other than digits and decimal points
+                                ],
+                                decoration: customInputFieldDecoration(
+                                    '', 'Amount ${i + 1}'),
+                                cursorColor: Pallete.secondaryColor,
+                              ),
+                            ),
+
+                            // Additional fields for share options for each item
+                            // Similar to previous implementation
+                            // ...
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Payees',
+                              style: TextStyle(
+                                color: Pallete.inputLabelTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      child: MultiSelectChipField(
+                                        showHeader: false,
+                                        chipColor: Pallete.secondaryColor,
+                                        textStyle: TextStyle(
+                                            color: Pallete.inputLabelTextColor),
+                                        items: widget.users.keys.map((e) {
+                                          return MultiSelectItem<int?>(
+                                            e,
+                                            widget.users[e]!,
+                                          );
+                                        }).toList(),
+                                        onTap: (values) {
+                                          setState(() {
+                                            items[i].usersInvolved = values;
+                                            print(
+                                                'users:${items[i].usersInvolved}');
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            if (items[i].usersInvolved!.length > 1) ...[
+                              Text(
+                                'Split Type:',
+                                style: TextStyle(
+                                  color: Pallete.inputLabelTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              DropdownButton<String>(
+                                value: items[i].shareType,
+                                onChanged: (newValue) {
+                                  if (newValue != 'E') {
+                                    if (items[i].usersInvolved!.length < 2) {
+                                      setState(() {
+                                        items[i].shareType = 'E';
+                                      });
+                                      showSnackbar(
+                                          context, 'add more than 1 payee');
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SharesDialogue(
+                                            users: widget.users,
+                                            item: items[i],
+                                          );
+                                        },
+                                      );
+                                      setState(() {
+                                        items[i].shareType = newValue!;
+                                      });
+                                    }
+                                  } else {
+                                    setState(() {
+                                      items[i].shareType = newValue!;
+                                    });
+                                  }
+                                },
+                                items:
+                                    _shareTypeOptions.keys.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(_shareTypeOptions[value]!),
+                                  );
+                                }).toList(),
+                              ),
+                              if (items[i].shareType != 'E') ...[
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Edit Values:',
+                                  style: TextStyle(
+                                    color: Pallete.inputLabelTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SharesDialogue(
+                                              users: widget.users,
+                                              item: items[i]);
+                                        },
                                       );
                                     },
-                                  );
-                                  setState(() {
-                                    items[i].shareType = newValue!;
-                                  });
-                                }
-                              },
-                              items: _shareTypeOptions.keys.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(_shareTypeOptions[value]!),
-                                );
-                              }).toList(),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (items.length < 15) {
-                      setState(() {
-                        items.add(Item(
-                            name: '',
-                            amount: 0,
-                            usersInvolved: [],
-                            shareType: 'E',
-                            shareValue: {}));
-                      });
-                    } else {
-                      // Show a message or disable button if max items reached
-                    }
-                  },
-                  icon: Icon(Icons.add),
-                  label: Text('Add Item'),
-                ),
-                if (items.length > 0) ...[
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.navigate_next),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.orange,
-                      onPrimary: Colors.white,
+                                    icon: const Icon(Icons.edit))
+                              ]
+                            ],
+                          ],
+                        )
+                      ],
                     ),
-                    onPressed: () {
-                      // if (_formKey.currentState!.validate()) {
-                      //   // Perform your submission logic here
-                      //   addExpense();
-                      //   // Handle the submitted data as needed
-                      // }
-                    },
-                    label: Text('Next'),
                   ),
-                ]
-              ],
-            )
-          ]),
+                ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (items.length < 15) {
+                        if (items.length > 0) {
+                          if (items[items.length - 1].usersInvolved!.isEmpty) {
+                            showSnackbar(context,
+                                "Please add atleast one payee before adding another item");
+                          } else {
+                            if (_formKey.currentState!.validate()) {
+                              if (items[items.length - 1].shareType == 'P') {
+                                double totalShares =
+                                    items[items.length - 1].totalShares!;
+                                if (totalShares != 100) {
+                                  showSnackbar(context,
+                                      "Total percentage doesn't add upto 100");
+                                } else {
+                                  addItem();
+                                }
+                              } else {
+                                addItem();
+                              }
+                            }
+                          }
+                        } else {
+                          addItem();
+                        }
+                      } else {
+                        // Show a message or disable button if max items reached
+                      }
+                    },
+                    icon: Icon(Icons.add),
+                    label: Text('Add Item'),
+                  ),
+                  if (items.length > 0) ...[
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.navigate_next),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.orange,
+                        onPrimary: Colors.white,
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.push(
+                              context,
+                              CreateExpenseAdvanced.route(
+                                  users: widget.users,
+                                  items: items,
+                                  fromScreen: widget.fromScreen,
+                                  userToFriendId: widget.userToFriendId,
+                                  groupId: widget.groupId));
+                        }
+                      },
+                      label: Text('Next'),
+                    ),
+                  ]
+                ],
+              )
+            ]),
+          ),
         ),
       ),
     );

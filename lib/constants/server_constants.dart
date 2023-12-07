@@ -7,6 +7,7 @@ class ServerConstants {
   static const String getFriendsUrl = '$_serverUrl/api/friends/get-friends';
   static const String addExpenseNormalUrl =
       '$_serverUrl/api/expenses/create-expense-normal';
+  static const String addExpenseUrl = '$_serverUrl/api/expenses/add-expense';
 
   static const String getExpensesUrl = '$_serverUrl/api/expenses/get-expenses';
 }
