@@ -7,9 +7,6 @@ class ExpensePayee {
   final int payerId;
   final String payeeName;
   final String payerName;
-  final String shareType;
-  final double? shareValue;
-  final int? totalShares;
   final double share;
 
   ExpensePayee(
@@ -18,9 +15,6 @@ class ExpensePayee {
       required this.payerId,
       required this.payeeName,
       required this.payerName,
-      required this.shareType,
-      this.shareValue,
-      this.totalShares,
       required this.share});
 
   Map<String, dynamic> toMap() {
@@ -30,9 +24,6 @@ class ExpensePayee {
       'payerId': payerId,
       'payeeName': payeeName,
       'payerName': payerName,
-      'shareType': shareType,
-      'shareValue': shareValue,
-      'totalShares': totalShares,
       'share': share,
     };
   }
@@ -44,11 +35,6 @@ class ExpensePayee {
       payerId: map['payerId'] as int,
       payeeName: map['payeeName'] as String,
       payerName: map['payerName'] as String,
-      shareType: map['shareType'] as String,
-      shareValue:
-          map['shareValue'] != null ? map['shareValue'] as double : null,
-      totalShares:
-          map['totalShares'] != null ? map['totalShares'] as int : null,
       share: map['share'] as double,
     );
   }

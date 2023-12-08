@@ -35,12 +35,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
   void addItem() {
     setState(() {
       items.add(Item(
-          name: '',
-          amount: 0,
-          usersInvolved: [],
-          totalShares: 0,
-          shareType: 'E',
-          shareValue: {}));
+        name: '',
+        amount: 0,
+        quantity: 1,
+        usersInvolved: [],
+        totalShares: 0,
+        shareType: 'T',
+        shareValue: {},
+      ));
     });
   }
 
@@ -78,12 +80,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 Card(
                   margin: EdgeInsets.symmetric(vertical: 8.0),
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(15.0),
                     child: Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text(
+                              'Item ${i + 1}',
+                              style: TextStyle(
+                                color: Pallete.inputLabelTextColor,
+                                fontSize: 20,
+                              ),
+                            ),
                             IconButton(
                               onPressed: () {
                                 _deleteItem(i);
@@ -97,6 +106,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
+                              flex: 2,
                               child: TextFormField(
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -104,11 +114,39 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   }
                                   return null;
                                 },
-                                decoration: customInputFieldDecoration(
-                                    '', 'Item Name ${i + 1}'),
+                                decoration:
+                                    customInputFieldDecoration('', 'Name'),
                                 onChanged: (value) {
                                   setState(() {
                                     items[i].name = value;
+                                  });
+                                },
+                                cursorColor: Pallete.secondaryColor,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'^[a-zA-Z0-9\s]*$')), // Allow letters, numbers, and spaces
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: TextFormField(
+                                initialValue: items[i].quantity.toString(),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a quantity';
+                                  }
+                                  return null;
+                                },
+                                decoration:
+                                    customInputFieldDecoration('', 'No\'s'),
+                                onChanged: (value) {
+                                  setState(() {
+                                    items[i].quantity =
+                                        int.tryParse(value) ?? 0;
                                   });
                                 },
                                 cursorColor: Pallete.secondaryColor,
@@ -137,13 +175,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 },
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(RegExp(
-                                      r'^\d+\.?\d{0,2}')), // Allow digits and decimal point with up to 2 decimal places
                                   FilteringTextInputFormatter.deny(RegExp(
-                                      r'[^\d\.]+')), // Deny input other than digits and decimal points
+                                      r'[^\d]')), // Deny input other than digits
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'^0+')), // Deny leading zeros
                                 ],
-                                decoration: customInputFieldDecoration(
-                                    '', 'Amount ${i + 1}'),
+                                decoration:
+                                    customInputFieldDecoration('', 'Price'),
                                 cursorColor: Pallete.secondaryColor,
                               ),
                             ),
@@ -180,9 +218,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                         }).toList(),
                                         onTap: (values) {
                                           setState(() {
+                                            if (values.length < 2) {
+                                              items[i].shareType = 'T';
+                                            } else {
+                                              items[i].shareType = 'E';
+                                            }
                                             items[i].usersInvolved = values;
-                                            print(
-                                                'users:${items[i].usersInvolved}');
                                           });
                                         },
                                       ),
@@ -213,26 +254,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 value: items[i].shareType,
                                 onChanged: (newValue) {
                                   if (newValue != 'E') {
-                                    if (items[i].usersInvolved!.length < 2) {
-                                      setState(() {
-                                        items[i].shareType = 'E';
-                                      });
-                                      showSnackbar(
-                                          context, 'add more than 1 payee');
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SharesDialogue(
-                                            users: widget.users,
-                                            item: items[i],
-                                          );
-                                        },
-                                      );
-                                      setState(() {
-                                        items[i].shareType = newValue!;
-                                      });
-                                    }
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SharesDialogue(
+                                          users: widget.users,
+                                          item: items[i],
+                                        );
+                                      },
+                                    );
+                                    setState(() {
+                                      items[i].shareType = newValue!;
+                                    });
                                   } else {
                                     setState(() {
                                       items[i].shareType = newValue!;
@@ -332,14 +365,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                              context,
-                              CreateExpenseAdvanced.route(
-                                  users: widget.users,
-                                  items: items,
-                                  fromScreen: widget.fromScreen,
-                                  userToFriendId: widget.userToFriendId,
-                                  groupId: widget.groupId));
+                          if (items[items.length - 1].usersInvolved!.isEmpty) {
+                            showSnackbar(context,
+                                "Pleae select atleast one user for ${items[items.length - 1].name}");
+                          } else {
+                            Navigator.push(
+                                context,
+                                CreateExpenseAdvanced.route(
+                                    users: widget.users,
+                                    items: items,
+                                    fromScreen: widget.fromScreen,
+                                    userToFriendId: widget.userToFriendId,
+                                    groupId: widget.groupId));
+                          }
                         }
                       },
                       label: Text('Next'),

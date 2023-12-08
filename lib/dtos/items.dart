@@ -1,46 +1,47 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:splitbuddy/dtos/item_sharers.dart';
+import 'package:http/http.dart';
 
 class Item {
   final int? expenseId;
   final int? itemId;
+  int quantity;
   String name;
   double amount;
   List<int?>? usersInvolved;
   String shareType;
   Map<int, double>? shareValue;
   double? totalShares;
-  final List<ItemSharer>? itemSharers;
 
   Item(
       {required this.name,
       required this.amount,
+      required this.quantity,
       required this.usersInvolved,
       required this.shareType,
-      required this.shareValue,
-      this.itemSharers,
-      required this.totalShares,
+      this.shareValue,
+      this.totalShares,
       this.expenseId,
       this.itemId});
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'expenseId': expenseId,
-      'itemId': itemId,
+    Map<String, dynamic> map = {
       'name': name,
       'amount': amount,
       'usersInvolved': usersInvolved,
       'shareType': shareType,
-      'shareValue': shareValue,
-      'totalShares': totalShares,
-      'itemSharers': itemSharers!.map((x) => x?.toMap()).toList(),
+      'quantity': quantity,
     };
+    if (shareValue!.isNotEmpty) {
+      map['shareValue'] = shareValue;
+    }
+    return map;
   }
 
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
+      quantity: map['quantity'],
       expenseId: map['expenseId'] != null ? map['expenseId'] as int : null,
       itemId: map['itemId'] != null ? map['itemId'] as int : null,
       name: map['name'] as String,
@@ -54,11 +55,6 @@ class Item {
           : null,
       totalShares:
           map['totalShares'] != null ? map['totalShares'] as double : null,
-      itemSharers: map['itemSharers'] != null
-          ? (map['itemSharers'] as List<dynamic>?)
-              ?.map((sharer) => ItemSharer.fromJson(sharer))
-              .toList()
-          : null,
     );
   }
 

@@ -15,7 +15,6 @@ import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
   String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
-  int userId = SharedPreferenceService.getInt('userId');
   FriendsService _friendsService = FriendsService();
   void createExpenseNormal({
     required BuildContext context,
@@ -129,7 +128,6 @@ class ExpenseService {
     double? totalAmount,
   }) async {
     ExpensesAdv expensesAdv = ExpensesAdv(
-      createdById: userId,
       payerId: payerId,
       date: date,
       description: description,
@@ -141,9 +139,8 @@ class ExpenseService {
       totalAmount: totalAmount,
       items: items,
     );
-
     http.Response response = await http.post(
-        Uri.parse(ServerConstants.addExpenseNormalUrl),
+        Uri.parse(ServerConstants.addExpenseUrl),
         body: expensesAdv.toJson(),
         headers: RequestHeaders.getAuthenticatedHeaders(token: token));
   }

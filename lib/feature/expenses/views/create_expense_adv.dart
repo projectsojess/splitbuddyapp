@@ -3,6 +3,7 @@ import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_form_adv.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_options_ad.dart';
 import 'package:splitbuddy/services/expense_service.dart';
+import 'package:splitbuddy/services/service.dart';
 
 class CreateExpenseAdvanced extends StatefulWidget {
   final Map<int, String> users;
@@ -42,8 +43,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
 class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   ExpenseService service = ExpenseService();
-  int _paidBy = 0; // Default paid by yourself
-  String _splitType = 'E'; // Default split type is equally
+  int _paidBy = SharedPreferenceService.getInt("userId");
   DateTime _selectedDate = DateTime.now();
   final amountController = TextEditingController();
   final descrptionController = TextEditingController();
@@ -79,6 +79,10 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
         date: _selectedDate.toIso8601String(),
         description: descrptionController.text,
         userToFriendId: widget.userToFriendId!,
+        tax: double.tryParse(taxController.text) ?? 0,
+        untaxedAmount: double.tryParse(untaxedAmountController.text) ?? 0,
+        totalAmount: double.tryParse(amountController.text) ?? 0,
+        serviceCharge: double.tryParse(serviceChargeController.text) ?? 0,
         items: widget.items!);
   }
 
@@ -86,7 +90,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
   void initState() {
     super.initState();
     widget.items!.forEach((item) {
-      _untaxedAmount += item.amount;
+      _untaxedAmount += (item.amount * item.quantity);
     });
     untaxedAmountController.text = _untaxedAmount.toString();
     taxController.addListener(calculateTotalAmount);
