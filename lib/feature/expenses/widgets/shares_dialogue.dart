@@ -25,14 +25,14 @@ class _SharesDialogueState extends State<SharesDialogue> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: widget.item.shareValue![userId] != 0 &&
-                            widget.item.shareValue![userId] != null
-                        ? widget.item.shareValue![userId].toString()
+                    initialValue: widget.item.shareValues![userId] != 0 &&
+                            widget.item.shareValues![userId] != null
+                        ? widget.item.shareValues![userId].toString()
                         : '',
                     onChanged: (value) {
                       setState(() {
                         double valueD = double.tryParse(value) ?? 0;
-                        widget.item.shareValue![userId] = valueD;
+                        widget.item.shareValues![userId] = valueD;
                         double shareAmount = 0;
                         if (widget.item.shareType == 'P') {
                           shareAmount = (valueD * widget.item.amount) / 100;
@@ -84,7 +84,7 @@ class _SharesDialogueState extends State<SharesDialogue> {
         TextButton(
           onPressed: () {
             double totalShares = 0;
-            widget.item.shareValue!.values.forEach((val) {
+            widget.item.shareValues!.values.forEach((val) {
               totalShares += val;
             });
             widget.item.totalShares = totalShares;

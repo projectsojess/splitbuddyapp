@@ -1,10 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
 import 'package:splitbuddy/dtos/items.dart';
 
+part 'expenses_adv.g.dart';
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class ExpensesAdv {
   final String type;
   final int? expenseId;
@@ -41,83 +44,8 @@ class ExpensesAdv {
     this.untaxedAmount,
     this.totalAmount,
   });
+  factory ExpensesAdv.fromJson(Map<String, dynamic> json) =>
+      _$ExpensesAdvFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
-      'date': date,
-      'payerId': payerId,
-      'description': description,
-      'type': type,
-    };
-    if (userToFriendId != 0) {
-      map['userToFriendId'] = userToFriendId;
-    }
-    if (groupId != 0) {
-      map['groupId'] = groupId;
-    }
-    if (tax != 0) {
-      map['tax'] = tax;
-    }
-    if (serviceCharge != 0) {
-      map['serviceCharge'] = serviceCharge;
-    }
-    if (untaxedAmount != 0) {
-      map['untaxedAmount'] = untaxedAmount;
-    }
-    if (totalAmount != 0) {
-      map['totalAmount'] = totalAmount;
-    }
-
-    if (items!.isNotEmpty) {
-      map['items'] = items!.map((e) => e.toMap()).toList();
-    }
-    if (createdById != 0) {
-      map['createdById'] = createdById;
-    }
-    return map;
-  }
-
-  factory ExpensesAdv.fromMap(Map<String, dynamic> map) {
-    return ExpensesAdv(
-      type: map['type'] as String,
-      expenseId: map['expenseId'] != null ? map['expenseId'] as int : null,
-      createdById: map['createdById'] != null ? map['createdById'] as int : 0,
-      createdByName:
-          map['createdByName'] != null ? map['createdByName'] as String : null,
-      date: map['date'] as String,
-      payerId: map['payerId'] as int,
-      userToFriendId: map['userToFriendId'] as int,
-      description: map['description'] as String,
-      groupId: map['groupId'] != null ? map['groupId'] as int : null,
-      items: map['items'] != null
-          ? List<Item>.from(
-              (map['items'] as List<int>).map<Item?>(
-                (x) => Item.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
-      payer: map['payer'] != null
-          ? ExpensePayer.fromMap(map['payer'] as Map<String, dynamic>)
-          : null,
-      payee: map['payee'] != null
-          ? List<ExpensePayee>.from(
-              (map['payee'] as List<int>).map<ExpensePayee?>(
-                (x) => ExpensePayee.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
-      tax: map['tax'] != null ? map['tax'] as double : null,
-      serviceCharge:
-          map['serviceCharge'] != null ? map['serviceCharge'] as double : null,
-      untaxedAmount:
-          map['untaxedAmount'] != null ? map['untaxedAmount'] as double : null,
-      totalAmount:
-          map['totalAmount'] != null ? map['totalAmount'] as double : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory ExpensesAdv.fromJson(String source) =>
-      ExpensesAdv.fromMap(json.decode(source) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => _$ExpensesAdvToJson(this);
 }

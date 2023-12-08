@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/common/common.dart';
@@ -127,21 +129,26 @@ class ExpenseService {
     double? untaxedAmount,
     double? totalAmount,
   }) async {
-    ExpensesAdv expensesAdv = ExpensesAdv(
-      payerId: payerId,
-      date: date,
-      description: description,
-      type: 'FBA',
-      userToFriendId: userToFriendId,
-      tax: tax,
-      serviceCharge: serviceCharge,
-      untaxedAmount: untaxedAmount,
-      totalAmount: totalAmount,
-      items: items,
-    );
-    http.Response response = await http.post(
-        Uri.parse(ServerConstants.addExpenseUrl),
-        body: expensesAdv.toJson(),
-        headers: RequestHeaders.getAuthenticatedHeaders(token: token));
+    try {
+      ExpensesAdv expensesAdv = ExpensesAdv(
+        payerId: payerId,
+        date: date,
+        description: description,
+        type: 'FBA',
+        userToFriendId: userToFriendId,
+        tax: tax,
+        serviceCharge: serviceCharge,
+        untaxedAmount: untaxedAmount,
+        totalAmount: totalAmount,
+        items: items,
+      );
+      print(jsonEncode(expensesAdv));
+      http.Response response = await http.post(
+          Uri.parse(ServerConstants.addExpenseUrl),
+          body: jsonEncode(expensesAdv),
+          headers: RequestHeaders.getAuthenticatedHeaders(token: token));
+    } catch (e) {
+      print(e);
+    }
   }
 }

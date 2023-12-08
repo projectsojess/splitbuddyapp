@@ -41,7 +41,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
         usersInvolved: [],
         totalShares: 0,
         shareType: 'T',
-        shareValue: {},
+        shareValues: {},
       ));
     });
   }
@@ -151,8 +151,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 },
                                 cursorColor: Pallete.secondaryColor,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(RegExp(
-                                      r'^[a-zA-Z0-9\s]*$')), // Allow letters, numbers, and spaces
+                                  FilteringTextInputFormatter.deny(RegExp(
+                                      r'[^\d]')), // Deny input other than digits
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'^0+')), // Deny leading zeros
                                 ],
                               ),
                             ),
@@ -294,18 +296,19 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return SharesDialogue(
-                                              users: widget.users,
-                                              item: items[i]);
+                                Expanded(
+                                    child: IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return SharesDialogue(
+                                                  users: widget.users,
+                                                  item: items[i]);
+                                            },
+                                          );
                                         },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.edit))
+                                        icon: const Icon(Icons.edit)))
                               ]
                             ],
                           ],
