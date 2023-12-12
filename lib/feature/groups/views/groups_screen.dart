@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
+import 'package:splitbuddy/feature/groups/views/create_group_screen.dart';
 import 'package:splitbuddy/feature/groups/widgets/group_item.dart';
+import 'package:splitbuddy/themes/pallete.dart';
 
 List<GroupData> groups = [];
 
@@ -18,13 +20,12 @@ class GroupsScreen extends StatelessWidget {
           ? Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Handle the button press to create a group
-                  // You can navigate to a create group screen or perform any other action here
+                  Navigator.push(context, CreateGroupScreen.route(type: "N"));
                 },
                 icon: Icon(Icons.add),
                 label: Text('Create a Group'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.orange,
+                  primary: Pallete.secondaryColor,
                   onPrimary: Colors.white,
                 ),
               ),

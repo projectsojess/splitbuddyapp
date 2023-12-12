@@ -9,17 +9,6 @@ class GroupItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color amountColor = groupData.amount >= 0 ? Colors.green : Colors.red;
-    return ListTile(
-      leading: Icon(groupData.icon),
-      title: Text(groupData.name),
-      subtitle: Text(
-        groupData.amount >= 0
-            ? 'You are owed \$${groupData.amount.abs()}'
-            : 'You owe \$${groupData.amount.abs()}',
-        style: TextStyle(color: amountColor),
-      ),
-      onTap: onTap, // Handle onTap event
-    );
+    return Scaffold();
   }
 }

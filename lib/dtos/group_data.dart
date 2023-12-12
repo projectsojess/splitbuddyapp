@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class GroupData {
-  final String name;
-  final IconData icon;
-  final double amount;
-  final int groupId;
-
+  String name;
+  String category;
+  String type;
+  List<int> users;
   GroupData(
       {required this.name,
-      required this.icon,
-      required this.amount,
-      required this.groupId});
+      required this.category,
+      required this.users,
+      required this.type});
 }
