@@ -1,0 +1,22 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:splitbuddy/dtos/dtos.dart';
+
+class GroupProvider extends ChangeNotifier {
+  List<GroupData> _groups = [];
+
+  List<GroupData> get groups => _groups;
+
+  void addGroup(String group) {
+    _groups.add(GroupData.fromJson(jsonDecode(group)));
+    notifyListeners();
+  }
+
+  void addAllGroups(String groups) {
+    List<GroupData> groupResponses = List<GroupData>.from(
+        jsonDecode(groups)['groups'].map((model) => GroupData.fromJson(model)));
+    _groups = groupResponses;
+    notifyListeners();
+  }
+}

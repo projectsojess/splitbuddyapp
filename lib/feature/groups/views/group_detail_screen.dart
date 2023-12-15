@@ -1,0 +1,250 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
+import 'package:splitbuddy/dtos/expense_payee.dart';
+import 'package:splitbuddy/dtos/expense_payer.dart';
+import 'package:splitbuddy/dtos/group_data.dart';
+import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
+import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
+import 'package:splitbuddy/themes/pallete.dart';
+
+class GroupDetailScreen extends StatefulWidget {
+  final GroupData groupData;
+  const GroupDetailScreen({super.key, required this.groupData});
+
+  @override
+  State<GroupDetailScreen> createState() => _GroupDetailScreenState();
+}
+
+class _GroupDetailScreenState extends State<GroupDetailScreen> {
+  int userId = SharedPreferenceService.getInt("userId");
+  @override
+  Widget build(BuildContext context) {
+    double amountBorrowed = widget.groupData.amountBorrowed;
+    double amountLent = widget.groupData.amountLent;
+    bool isDebt = amountBorrowed > amountLent;
+    double debt =
+        isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
+    Color color = isDebt ? Colors.red : Colors.green;
+    String prefix = isDebt ? "You owe" : "You lent";
+    List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
+        .expenses
+        .where((element) => element.groupId == widget.groupData.groupId)
+        .toList();
+    int cardTranLen = expenses.length > 3 ? 3 : expenses.length;
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.groupData.groupName),
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.add, // Plus icon
+                color: Pallete.secondaryColor, // Set the color to orange
+              ),
+              onSelected: (value) {
+                switch (value) {
+                  case 'addExpense':
+                    // Navigator.push(
+                    //   context,
+                    //   // CreateExpenseNormal.route(friend: friends),
+                    // );
+                    break;
+                  case 'advancedExpense':
+                    // Navigate to the advanced expense screen
+                    // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddItemScreen(
+                                users: widget.groupData.members,
+                                groupId: widget.groupData.groupId,
+                                fromScreen: 'GBA',
+                              )),
+                    );
+                    break;
+                  // Add mor
+                  // Add more cases for other actions/screens
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'addExpense',
+                  child: Text('Add Expense'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'advancedExpense',
+                  child: Text('Advanced Expense'),
+                ),
+                // Add more PopupMenuItems for other actions
+              ],
+            ),
+          ],
+        ),
+        body: expenses.isEmpty
+            ? Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddItemScreen(
+                                users: widget.groupData.members,
+                                groupId: widget.groupData.groupId,
+                                fromScreen: 'GBA',
+                              )),
+                    );
+                  },
+                  icon: Icon(Icons.plus_one),
+                  style:
+                      ElevatedButton.styleFrom(primary: Pallete.secondaryColor),
+                  label: Text('Add Expense'),
+                ),
+              )
+            : SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Card(
+                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        prefix,
+                                        style: TextStyle(
+                                          color: color,
+                                          fontSize: 15,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        debt.toString(),
+                                        style: TextStyle(
+                                          color: color,
+                                          fontSize: 25,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  for (int i = 0; i < cardTranLen; i++)
+                                    Row(
+                                      children: [
+                                        Text(
+                                          expenses[i].payer.payerId == userId
+                                              ? 'You lent ' +
+                                                  (expenses[i]
+                                                              .payer
+                                                              .payedAmount -
+                                                          expenses[i]
+                                                              .payer
+                                                              .share)
+                                                      .toString()
+                                              : 'You borrowed ' +
+                                                  expenses[i]
+                                                      .payees
+                                                      .firstWhere((payee) =>
+                                                          payee.payeeId ==
+                                                          userId)
+                                                      .share
+                                                      .toString(),
+                                          style: TextStyle(
+                                            color: expenses[i].payer.payerId ==
+                                                    userId
+                                                ? Colors.green
+                                                : Colors.red,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    )
+                                ],
+                              ))),
+                      Card(
+                        elevation: 0, // No elevation to blend with the screen
+                        margin: EdgeInsets.only(top: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text(
+                                'Transactions',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            // Add your list of transactions here
+                            // Example: ListView.builder for transaction items
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: expenses.length,
+                              itemBuilder: (context, index) {
+                                ExpenseData expense = expenses[index];
+                                String formattedDate =
+                                    '${expense.date.month}/${expense.date.day}';
+                                ExpensePayer payer = expense.payer;
+                                List<ExpensePayee> payee = expense.payees;
+                                bool isUserPayer = payer.payerId == userId;
+                                Color color =
+                                    isUserPayer ? Colors.green : Colors.red;
+                                String prefix =
+                                    isUserPayer ? "You lent " : "You Borrowed ";
+                                // Replace with your transaction item UI
+                                return ListTile(
+                                  leading: Icon(Icons.food_bank),
+                                  iconColor: Pallete.secondaryColor,
+                                  title: Text(expenses[index].description),
+                                  subtitle: Text(
+                                    'Paid by: ${payer.payerName}',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          prefix,
+                                          style: TextStyle(
+                                            color: color,
+                                          ),
+                                        ),
+                                        Text(
+                                          payee[0].share.toString(),
+                                          style: TextStyle(
+                                            color: color,
+                                          ),
+                                        )
+                                      ]),
+                                  // Add more details as needed for each transaction
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ));
+  }
+}

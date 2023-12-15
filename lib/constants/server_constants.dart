@@ -10,4 +10,8 @@ class ServerConstants {
   static const String addExpenseUrl = '$_serverUrl/api/expenses/add-expense';
 
   static const String getExpensesUrl = '$_serverUrl/api/expenses/get-expenses';
+
+  static const String createGroupUrl = '$_serverUrl/api/groups/create-group';
+
+  static const String getAllGroupsUrl = '$_serverUrl/api/groups/get-groups';
 }

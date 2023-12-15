@@ -10,4 +10,5 @@ class Pallete {
   static const primaryColor = Color(0xFF161616);
   static const secondaryColor = Color(0xFFed7501);
   static const cursorColor = Color(0xFFed7501);
+  static const chipUnselectedColor = Color.fromARGB(255, 29, 28, 28);
 }

@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/create_expense_response.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
 
 class ExpensesProvider extends ChangeNotifier {
   List<CreateExpenseResponse> _expensesFriends = [];
@@ -12,44 +13,21 @@ class ExpensesProvider extends ChangeNotifier {
 
   List<CreateExpenseResponse> get expensesGroups => _expensesGroups;
 
-  void addExpense(String expense) {
-    CreateExpenseResponse expenseResponse =
-        CreateExpenseResponse.fromJson(expense);
-    if (expenseResponse.userToFriendId != 0) {
-      _expensesFriends.add(expenseResponse);
-    } else {
-      _expensesGroups.add(expenseResponse);
-    }
+  List<ExpenseData> _expenses = [];
+
+  List<ExpenseData> get expenses => _expenses;
+
+  void addAllExpenses(String response) {
+    List<ExpenseData> expenseResponse = List<ExpenseData>.from(
+        jsonDecode(response)['expenses']
+            .map((model) => ExpenseData.fromJson(model)));
+    _expenses = expenseResponse;
     notifyListeners();
   }
 
-  void addAllExpenses(String jsonString) {
-    List<CreateExpenseResponse> expenseResponseListF =
-        CreateExpenseResponse.expensesFriendsListFromJson(jsonString);
-
-    List<CreateExpenseResponse> expenseResponseListG =
-        CreateExpenseResponse.expensesGroupsListFromJson(jsonString);
-
-    if (_expensesFriends.isNotEmpty) {
-      if (expenseResponseListF.isNotEmpty) {
-        expenseResponseListF.forEach((expense) {
-          bool found = _expensesFriends
-              .any((element) => element.expenseId == expense.expenseId);
-          if (!found) {
-            if (expense.userToFriendId != 0) {
-              _expensesFriends.add(expense);
-              notifyListeners();
-            }
-          }
-        });
-      }
-    } else {
-      expenseResponseListF.forEach((element) {
-        if (element.userToFriendId != 0) {
-          _expensesFriends.add(element);
-          notifyListeners();
-        }
-      });
-    }
+  void addExpense(String expense) {
+    ExpenseData expenseResponse = ExpenseData.fromJson(jsonDecode(expense));
+    _expenses.add(expenseResponse);
+    notifyListeners();
   }
 }

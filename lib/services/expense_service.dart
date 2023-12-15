@@ -121,7 +121,9 @@ class ExpenseService {
     required int payerId,
     required String date,
     required String description,
-    required int userToFriendId,
+    required String fromScreen,
+    int? userToFriendId,
+    int? groupId,
     required List<Item> items,
     int? totalShares,
     double? tax,
@@ -134,8 +136,9 @@ class ExpenseService {
         payerId: payerId,
         date: date,
         description: description,
-        type: 'FBA',
+        type: fromScreen,
         userToFriendId: userToFriendId,
+        groupId: groupId,
         tax: tax,
         serviceCharge: serviceCharge,
         untaxedAmount: untaxedAmount,
@@ -147,6 +150,16 @@ class ExpenseService {
           Uri.parse(ServerConstants.addExpenseUrl),
           body: jsonEncode(expensesAdv),
           headers: RequestHeaders.getAuthenticatedHeaders(token: token));
+
+      httpErrorHandle(
+          response: response,
+          context: context,
+          onSuccess: () {
+            if (fromScreen == 'FBA' || fromScreen == 'GBA') {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
+          });
     } catch (e) {
       print(e);
     }

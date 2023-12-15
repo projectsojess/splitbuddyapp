@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/group_data.dart';
+import 'package:splitbuddy/dtos/dtos.dart';
 
 class GroupItem extends StatelessWidget {
   final GroupData groupData;
@@ -9,6 +9,23 @@ class GroupItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    double amountBorrowed = groupData.amountBorrowed;
+    double amountLent = groupData.amountLent;
+    bool isDebt = amountBorrowed > amountLent;
+    double debt =
+        isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
+    Color color = isDebt ? Colors.red : Colors.green;
+    String prefix = isDebt ? "You owe" : "You lent";
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(groupData.groupName[0]),
+      ),
+      title: Text(groupData.groupName),
+      trailing: Text(
+        '${prefix}\$ ${debt}',
+        style: TextStyle(color: color),
+      ),
+      onTap: onTap,
+    );
   }
 }

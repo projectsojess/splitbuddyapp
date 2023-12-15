@@ -76,9 +76,11 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
     service.addExpenseAdvanced(
         context: context,
         payerId: _paidBy,
+        fromScreen: widget.fromScreen,
         date: _selectedDate.toIso8601String(),
         description: descrptionController.text,
-        userToFriendId: widget.userToFriendId!,
+        userToFriendId: widget.userToFriendId,
+        groupId: widget.groupId,
         tax: double.tryParse(taxController.text) ?? 0,
         untaxedAmount: double.tryParse(untaxedAmountController.text) ?? 0,
         totalAmount: double.tryParse(amountController.text) ?? 0,
