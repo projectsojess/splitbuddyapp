@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseOptionsAdv extends StatefulWidget {
@@ -18,10 +19,9 @@ class ExpenseOptionsAdv extends StatefulWidget {
 }
 
 class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
-  // Default paid by yourself
-  String _splitType = 'E'; // Default split type is equally
+  // Default paid by yourself // Default split type is equally
   int _paidBy = 0;
-
+  int userId = SharedPreferenceService.getInt("userId");
   DateTime _selectedDate = DateTime.now(); // Store selected date
 
   late Map<String, String> _shareTypeOptions;
@@ -37,7 +37,7 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
       'S': 'No of shares'
     };
     _paidByOptions = widget.paidByOptions;
-    _paidBy = _paidByOptions.keys.first;
+    _paidBy = userId;
   }
 
   @override
@@ -70,7 +70,8 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
               items: widget.paidByOptions.keys.map((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
-                  child: Text(widget.paidByOptions[value]!),
+                  child: Text(
+                      value == userId ? 'You' : widget.paidByOptions[value]!),
                 );
               }).toList(),
             ),

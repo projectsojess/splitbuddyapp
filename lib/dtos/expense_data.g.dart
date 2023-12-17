@@ -18,12 +18,12 @@ ExpenseData _$ExpenseDataFromJson(Map<String, dynamic> json) => ExpenseData(
       untaxedAmount: (json['untaxedAmount'] as num?)?.toDouble(),
       totalAmount: (json['totalAmount'] as num).toDouble(),
       serviceCharge: (json['serviceCharge'] as num?)?.toDouble(),
-      payer: ExpensePayer.fromJson(json['payer'] as String),
+      payer: ExpensePayer.fromJson(json['payer'] as Map<String, dynamic>),
       items: (json['items'] as List<dynamic>?)
           ?.map((e) => Item.fromJson(e as Map<String, dynamic>))
           .toList(),
       payees: (json['payees'] as List<dynamic>)
-          .map((e) => ExpensePayee.fromJson(e as String))
+          .map((e) => ExpensePayee.fromJson(e as Map<String, dynamic>))
           .toList(),
       type: json['type'] as String,
       category: json['category'] as String?,
@@ -53,9 +53,9 @@ Map<String, dynamic> _$ExpenseDataToJson(ExpenseData instance) {
   writeNotNull('untaxedAmount', instance.untaxedAmount);
   val['totalAmount'] = instance.totalAmount;
   writeNotNull('serviceCharge', instance.serviceCharge);
-  val['payer'] = instance.payer;
-  writeNotNull('items', instance.items);
-  val['payees'] = instance.payees;
+  val['payer'] = instance.payer.toJson();
+  writeNotNull('items', instance.items?.map((e) => e.toJson()).toList());
+  val['payees'] = instance.payees.map((e) => e.toJson()).toList();
   val['type'] = instance.type;
   writeNotNull('category', instance.category);
   writeNotNull('totalShares', instance.totalShares);

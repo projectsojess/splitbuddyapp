@@ -8,11 +8,11 @@ part of 'expenses_adv.dart';
 
 ExpensesAdv _$ExpensesAdvFromJson(Map<String, dynamic> json) => ExpensesAdv(
       payee: (json['payee'] as List<dynamic>?)
-          ?.map((e) => ExpensePayee.fromJson(e as String))
+          ?.map((e) => ExpensePayee.fromJson(e as Map<String, dynamic>))
           .toList(),
       payer: json['payer'] == null
           ? null
-          : ExpensePayer.fromJson(json['payer'] as String),
+          : ExpensePayer.fromJson(json['payer'] as Map<String, dynamic>),
       expenseId: json['expenseId'] as int?,
       createdById: json['createdById'] as int?,
       type: json['type'] as String,

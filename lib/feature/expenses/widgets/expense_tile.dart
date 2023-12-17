@@ -1,145 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:splitbuddy/dtos/create_expense_response.dart';
-import 'package:splitbuddy/dtos/expense_payee.dart';
-import 'package:splitbuddy/dtos/expense_payer.dart';
+import 'package:splitbuddy/common/functions.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
+import 'package:splitbuddy/services/service.dart';
 
 class ExpenseTile extends StatelessWidget {
-  final CreateExpenseResponse expense;
-  final ExpensePayer payer;
-  final List<ExpensePayee> payee;
-  final bool isFriendPayer;
+  final ExpenseData expense;
+  int userId = SharedPreferenceService.getInt("userId");
 
-  const ExpenseTile({
-    Key? key,
-    required this.expense,
-    required this.payer,
-    required this.payee,
-    required this.isFriendPayer,
-  }) : super(key: key);
+  ExpenseTile({required this.expense});
 
   @override
   Widget build(BuildContext context) {
-    Color titleColor = isFriendPayer ? Colors.red : Colors.green;
-    String paymentType = isFriendPayer ? 'You Owe' : 'Owes';
-
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Card(
-        elevation: 0, // Remove Card's default elevation
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDateColumn(),
-              SizedBox(width: 16),
-              _buildExpenseDetailsColumn(),
-              _buildPaymentColumn(titleColor, paymentType),
-            ],
-          ),
+    bool isUserPayer = expense.payer.payerId == userId;
+    double amount = isUserPayer
+        ? expense.payer.payedAmount - expense.payer.share
+        : expense.payees
+            .firstWhere(
+              (payee) => payee.payeeId == userId,
+            )
+            .share;
+    return Dismissible(
+      key: Key(expense.expenseId.toString()), // Use a unique key for each tile
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20.0),
+        color: Colors.red,
+        child: Icon(
+          Icons.delete,
+          color: Colors.white,
         ),
       ),
-    );
-  }
-
-  Widget _buildDateColumn() {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: Colors.grey, // Lighter background color
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              DateFormat.MMM().format(expense.date).toUpperCase(),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+      onDismissed: (direction) {
+        // Implement deletion logic here
+        // You can use this function to remove the expense from the list
+        // or perform any other delete operation.
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 29, 28, 28),
+        ),
+        child: ListTile(
+            contentPadding: EdgeInsets.all(16.0),
+            leading: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    DateFormat('MMM')
+                        .format(expense.date), // Display month name
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    DateFormat('d').format(expense.date), // Display day
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 4),
-            Text(
-              '${expense.date.day}',
+            title: Text(
+              expense.description,
               style: TextStyle(
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16.0,
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpenseDetailsColumn() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            expense.description,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Paid by: ${expense.payer.payerId == userId ? 'You' : expense.payer.payerName}',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              ],
             ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            'Paid by: ${payer.payerName}',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey,
-            ),
-          ),
-        ],
+            trailing: Column(
+              children: [
+                Text(
+                  isUserPayer ? 'You lent' : 'You borrowed',
+                  style:
+                      TextStyle(color: isUserPayer ? Colors.green : Colors.red),
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  amount.toString(),
+                  style: TextStyle(
+                    color: isUserPayer ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ],
+            )),
       ),
-    );
-  }
-
-  Widget _buildPaymentColumn(Color titleColor, String paymentType) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          paymentType,
-          style: TextStyle(
-            color: titleColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          '\$${payee[0].share.toString()}',
-          style: TextStyle(
-            color: titleColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ],
     );
   }
 }

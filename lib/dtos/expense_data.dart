@@ -4,7 +4,7 @@ import 'package:splitbuddy/dtos/expense_payer.dart';
 import 'package:splitbuddy/dtos/items.dart';
 part 'expense_data.g.dart';
 
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: false, explicitToJson: true)
 class ExpenseData {
   final int expenseId;
   final int? userToFriendId;

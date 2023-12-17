@@ -30,8 +30,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
   List<Item> items = [];
   int itemLength = 0;
 
-  int _selectedUser = 0;
-
   void addItem() {
     setState(() {
       items.add(Item(
@@ -209,7 +207,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     Container(
                                       child: MultiSelectChipField(
                                         showHeader: false,
-                                        chipColor: Pallete.secondaryColor,
+                                        chipColor: const Color.fromARGB(
+                                            255, 29, 28, 28),
+                                        selectedChipColor:
+                                            Pallete.secondaryColor,
                                         textStyle: TextStyle(
                                             color: Pallete.inputLabelTextColor),
                                         items: widget.users.keys.map((e) {

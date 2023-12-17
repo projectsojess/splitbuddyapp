@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:splitbuddy/dtos/create_expense_response.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
 import 'package:splitbuddy/dtos/friendResponse.dart';
@@ -41,12 +41,11 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
     String title = widget.friend.owed ? 'Owes' : 'You owes';
     Color colorOwe = widget.friend.owed ? Colors.green : Colors.red;
     final List<FriendResponse> friends = [widget.friend];
-    List<CreateExpenseResponse> expenses =
-        Provider.of<ExpensesProvider>(context)
-            .expensesFriends
-            .where((element) =>
-                element.userToFriendId == widget.friend.userToFriendId)
-            .toList();
+    List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
+        .expenses
+        .where(
+            (element) => element.userToFriendId == widget.friend.userToFriendId)
+        .toList();
     int cardTranLen = expenses.length > 3 ? 3 : expenses.length;
     return Scaffold(
         appBar: AppBar(
@@ -201,7 +200,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: expenses.length,
                               itemBuilder: (context, index) {
-                                CreateExpenseResponse expense = expenses[index];
+                                ExpenseData expense = expenses[index];
                                 String formattedDate =
                                     '${expense.date.month}/${expense.date.day}';
                                 ExpensePayer payer = expense.payer;

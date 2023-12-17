@@ -1,8 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:http/http.dart';
+part 'expense_payer.g.dart';
 
+@JsonSerializable(includeIfNull: false)
 class ExpensePayer {
   final int payerId;
   final int expenseId;
@@ -18,28 +18,8 @@ class ExpensePayer {
     required this.payedAmount,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'payerId': payerId,
-      'expenseId': expenseId,
-      'payerName': payerName,
-      'payedAmount': payedAmount,
-      'share': share,
-    };
-  }
+  factory ExpensePayer.fromJson(Map<String, dynamic> json) =>
+      _$ExpensePayerFromJson(json);
 
-  factory ExpensePayer.fromMap(Map<String, dynamic> map) {
-    return ExpensePayer(
-      payerId: map['payerId'] as int,
-      expenseId: map['expenseId'] as int,
-      payerName: map['payerName'] as String,
-      payedAmount: map['payedAmount'] as double,
-      share: map['share'] as double,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory ExpensePayer.fromJson(String source) =>
-      ExpensePayer.fromMap(json.decode(source) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => _$ExpensePayerToJson(this);
 }

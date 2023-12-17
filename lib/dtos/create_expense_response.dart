@@ -16,8 +16,8 @@ class CreateExpenseResponse {
   final double? tax;
   final double? untaxedAmount;
   final double totalAmount;
-  final ExpensePayer payer;
-  final List<ExpensePayee> payees;
+  final ExpensePayer? payer;
+  final List<ExpensePayee>? payees;
 
   CreateExpenseResponse(
       {required this.expenseId,
@@ -30,8 +30,8 @@ class CreateExpenseResponse {
       this.tax,
       this.untaxedAmount,
       required this.totalAmount,
-      required this.payer,
-      required this.payees});
+      this.payer,
+      this.payees});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -45,8 +45,6 @@ class CreateExpenseResponse {
       'tax': tax,
       'untaxedAmount': untaxedAmount,
       'totalAmount': totalAmount,
-      'payer': payer.toMap(),
-      'payees': payees.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -64,12 +62,6 @@ class CreateExpenseResponse {
       untaxedAmount:
           map['untaxedAmount'] != null ? map['untaxedAmount'] as double : null,
       totalAmount: map['totalAmount'] as double,
-      payer: ExpensePayer.fromMap(map['payer'] as Map<String, dynamic>),
-      payees: List<ExpensePayee>.from(
-        (map['payees'] as List<dynamic>).map<ExpensePayee>(
-          (x) => ExpensePayee.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
     );
   }
 
