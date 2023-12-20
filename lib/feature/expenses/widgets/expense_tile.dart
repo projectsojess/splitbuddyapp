@@ -1,27 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:splitbuddy/common/functions.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/services/service.dart';
+import 'package:splitbuddy/themes/pallete.dart';
 
-class ExpenseTile extends StatelessWidget {
+class ExpenseTile extends StatefulWidget {
   final ExpenseData expense;
-  int userId = SharedPreferenceService.getInt("userId");
 
   ExpenseTile({required this.expense});
 
   @override
+  State<ExpenseTile> createState() => _ExpenseTileState();
+}
+
+class _ExpenseTileState extends State<ExpenseTile> {
+  final int userId = SharedPreferenceService.getInt("userId");
+
+  @override
   Widget build(BuildContext context) {
-    bool isUserPayer = expense.payer.payerId == userId;
+    bool isUserPayer = widget.expense.payer.payerId == userId;
+    bool isUserPayee =
+        widget.expense.payees.any((payee) => payee.payeeId == userId);
     double amount = isUserPayer
-        ? expense.payer.payedAmount - expense.payer.share
-        : expense.payees
-            .firstWhere(
-              (payee) => payee.payeeId == userId,
-            )
-            .share;
+        ? widget.expense.payer.payedAmount - widget.expense.payer.share
+        : isUserPayee
+            ? widget.expense.payees
+                .firstWhere(
+                  (payee) => payee.payeeId == userId,
+                )
+                .share
+            : 0;
     return Dismissible(
-      key: Key(expense.expenseId.toString()), // Use a unique key for each tile
+      key: Key(widget.expense.expenseId
+          .toString()), // Use a unique key for each tile
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -39,8 +50,8 @@ class ExpenseTile extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 29, 28, 28),
-        ),
+            // color: Pallete.cardBgColor,
+            ),
         child: ListTile(
             contentPadding: EdgeInsets.all(16.0),
             leading: Container(
@@ -50,19 +61,17 @@ class ExpenseTile extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat('MMM')
-                        .format(expense.date), // Display month name
+                        .format(widget.expense.date), // Display month name
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      color: Pallete.textColor,
                       fontSize: 16.0,
                     ),
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    DateFormat('d').format(expense.date), // Display day
+                    DateFormat('d').format(widget.expense.date), // Display day
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      color: Pallete.textColor,
                       fontSize: 18.0,
                     ),
                   ),
@@ -70,9 +79,9 @@ class ExpenseTile extends StatelessWidget {
               ),
             ),
             title: Text(
-              expense.description,
+              widget.expense.description,
               style: TextStyle(
-                color: Colors.white,
+                color: Pallete.textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
               ),
@@ -81,17 +90,26 @@ class ExpenseTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Paid by: ${expense.payer.payerId == userId ? 'You' : expense.payer.payerName}',
-                  style: TextStyle(color: Colors.white70),
+                  'Paid by: ${widget.expense.payer.payerId == userId ? 'You' : widget.expense.payer.payerName}',
+                  style: TextStyle(color: Pallete.textColor),
                 ),
               ],
             ),
             trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  isUserPayer ? 'You lent' : 'You borrowed',
-                  style:
-                      TextStyle(color: isUserPayer ? Colors.green : Colors.red),
+                  isUserPayer
+                      ? 'You lent'
+                      : isUserPayee
+                          ? 'You borrowed'
+                          : 'You\'re not involved',
+                  style: TextStyle(
+                      color: isUserPayer
+                          ? Colors.green
+                          : isUserPayee
+                              ? Colors.red
+                              : Colors.grey),
                 ),
                 SizedBox(
                   height: 2,
@@ -99,7 +117,11 @@ class ExpenseTile extends StatelessWidget {
                 Text(
                   amount.toString(),
                   style: TextStyle(
-                    color: isUserPayer ? Colors.green : Colors.red,
+                    color: isUserPayer
+                        ? Colors.green
+                        : isUserPayee
+                            ? Colors.red
+                            : Colors.grey,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),

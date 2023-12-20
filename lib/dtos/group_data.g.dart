@@ -16,6 +16,9 @@ GroupData _$GroupDataFromJson(Map<String, dynamic> json) => GroupData(
       amountLent: (json['amountLent'] as num).toDouble(),
       type: json['type'] as String,
       category: json['category'] as String,
+      memberData: (json['memberData'] as List<dynamic>)
+          .map((e) => UserToMemberData.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$GroupDataToJson(GroupData instance) => <String, dynamic>{
@@ -25,5 +28,6 @@ Map<String, dynamic> _$GroupDataToJson(GroupData instance) => <String, dynamic>{
       'amountBorrowed': instance.amountBorrowed,
       'amountLent': instance.amountLent,
       'type': instance.type,
+      'memberData': instance.memberData,
       'category': instance.category,
     };

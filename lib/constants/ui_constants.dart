@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_svg/svg.dart";
 import "package:splitbuddy/feature/auth/views/login_view.dart";
+import "package:splitbuddy/themes/pallete.dart";
 
 class UIConstants {
   static Text getAppTitle(double fontSize) {
@@ -10,6 +11,7 @@ class UIConstants {
         fontSize: fontSize,
         fontWeight: FontWeight.bold,
         fontFamily: 'Source Sans Pro',
+        color: Pallete.textColor,
       ),
     );
   }
@@ -21,6 +23,7 @@ class UIConstants {
         fontSize: fontSize,
         fontWeight: FontWeight.bold,
         fontFamily: 'Source Sans Pro',
+        color: Pallete.textColor,
       ),
     );
   }

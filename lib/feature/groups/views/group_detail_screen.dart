@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
@@ -35,7 +37,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
     double debt =
         isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
 
-    String prefix = isDebt ? "You owe" : "You lent";
+    String prefix = isDebt ? "You owe: " : "You get back: ";
+    Color color = isDebt ? Colors.red : Colors.green;
     List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
         .expenses
         .where((element) => element.groupId == widget.groupData.groupId)
@@ -88,51 +91,47 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           ),
         ],
       ),
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            Card(
-              margin: EdgeInsets.symmetric(vertical: 8.0),
-              color: Pallete.secondaryColor,
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          prefix,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          debt.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
+      body: Column(
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              Text(
+                prefix,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Pallete.textColor,
                 ),
               ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                debt.toString(),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              // color: Pallete.cardBgColor,
+              borderRadius: BorderRadius.circular(10),
             ),
-            SizedBox(
-              height: 40,
-            ),
-            Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Loop through enum values to create buttons dynamically
@@ -156,27 +155,30 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                         backgroundColor: MaterialStateProperty.all<Color>(
                             _currentTab == tab
                                 ? Pallete.secondaryColor
-                                : const Color.fromARGB(255, 29, 28, 28))),
+                                : Pallete.buttonPrimaryColor)),
 
                     child: Text(
                       _tabName(tab),
                       style: TextStyle(
-                        color: Colors.white,
+                        color: _currentTab == tab
+                            ? Colors.white
+                            : Pallete.textColor,
                       ),
                     ), // Get tab name dynamically
                   ),
               ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-            _currentTab == GroupDetailTab.Expenses
-                ? ExpenseList(expenses: expenses, groupData: widget.groupData)
-                : _currentTab == GroupDetailTab.Overview
-                    ? OverViewTab()
-                    : MembersList()
-          ],
-        ),
+          ),
+          _currentTab == GroupDetailTab.Expenses
+              ? ExpenseList(expenses: expenses, groupData: widget.groupData)
+              : _currentTab == GroupDetailTab.Overview
+                  ? OverViewTab(
+                      memberData: widget.groupData.memberData,
+                    )
+                  : MembersList(
+                      members: widget.groupData.members,
+                    )
+        ],
       ),
     );
   }

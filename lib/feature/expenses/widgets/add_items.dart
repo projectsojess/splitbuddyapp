@@ -76,6 +76,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               SizedBox(height: 20),
               for (int i = 0; i < items.length; i++)
                 Card(
+                  color: Pallete.cardBgColor,
                   margin: EdgeInsets.symmetric(vertical: 8.0),
                   child: Padding(
                     padding: EdgeInsets.all(15.0),
@@ -207,10 +208,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     Container(
                                       child: MultiSelectChipField(
                                         showHeader: false,
-                                        chipColor: const Color.fromARGB(
-                                            255, 29, 28, 28),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.transparent),
+                                        ),
+                                        chipColor: Pallete.buttonPrimaryColor,
                                         selectedChipColor:
                                             Pallete.secondaryColor,
+                                        selectedTextStyle: TextStyle(
+                                          color:
+                                              Pallete.buttonSelectedTextColor,
+                                        ),
                                         textStyle: TextStyle(
                                             color: Pallete.inputLabelTextColor),
                                         items: widget.users.keys.map((e) {
@@ -325,6 +333,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton.icon(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Pallete.buttonPrimaryColor),
+                    ),
                     onPressed: () {
                       if (items.length < 15) {
                         if (items.length > 0) {
@@ -354,8 +366,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         // Show a message or disable button if max items reached
                       }
                     },
-                    icon: Icon(Icons.add),
-                    label: Text('Add Item'),
+                    icon: Icon(
+                      Icons.add,
+                      color: Pallete.textColor,
+                    ),
+                    label: Text(
+                      'Add Item',
+                      style: TextStyle(color: Pallete.textColor),
+                    ),
                   ),
                   if (items.length > 0) ...[
                     SizedBox(
@@ -364,7 +382,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     ElevatedButton.icon(
                       icon: Icon(Icons.navigate_next),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.orange,
+                        primary: Pallete.secondaryColor,
                         onPrimary: Colors.white,
                       ),
                       onPressed: () {

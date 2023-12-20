@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:splitbuddy/dtos/user_to_member_data.dart';
 part 'group_data.g.dart';
 
 @JsonSerializable(includeIfNull: false)
@@ -9,6 +10,7 @@ class GroupData {
   final double amountBorrowed;
   final double amountLent;
   final String type;
+  final List<UserToMemberData> memberData;
   final String category;
 
   GroupData({
@@ -19,6 +21,7 @@ class GroupData {
     required this.amountLent,
     required this.type,
     required this.category,
+    required this.memberData,
   });
 
   factory GroupData.fromJson(Map<String, dynamic> json) =>
