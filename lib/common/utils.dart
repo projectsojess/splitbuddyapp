@@ -50,3 +50,23 @@ InputDecoration customInputFieldDecoration(String hintText, String label) {
     ),
   );
 }
+
+Row getUnderLine() {
+  return Row(
+    children: [
+      Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.grey,
+                width: 1.0,
+              ),
+            ),
+          ),
+          width: 10,
+        ),
+      ),
+    ],
+  );
+}

@@ -77,7 +77,10 @@ class _ExpenseListState extends State<ExpenseList> {
                   itemBuilder: (context, index) {
                     ExpenseData expense = widget.expenses[index];
                     // Replace with your transaction item UI
-                    return ExpenseTile(expense: expense);
+                    return ExpenseTile(
+                      expense: expense,
+                      groupData: widget.groupData,
+                    );
                   },
                 )
               ],

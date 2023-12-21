@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
+import 'package:splitbuddy/dtos/group_data.dart';
+import 'package:splitbuddy/feature/expenses/views/expense_detail_screen.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseTile extends StatefulWidget {
   final ExpenseData expense;
-
-  ExpenseTile({required this.expense});
+  final GroupData groupData;
+  ExpenseTile({required this.expense, required this.groupData});
 
   @override
   State<ExpenseTile> createState() => _ExpenseTileState();
@@ -54,6 +56,13 @@ class _ExpenseTileState extends State<ExpenseTile> {
             ),
         child: ListTile(
             contentPadding: EdgeInsets.all(16.0),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  ExpenseDetailScreen.route(
+                      expenseData: widget.expense,
+                      groupData: widget.groupData));
+            },
             leading: Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
