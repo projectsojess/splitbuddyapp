@@ -6,12 +6,14 @@ class ExpenseOptionsAdv extends StatefulWidget {
   final ValueChanged<int> onPaidByChanged;
   final Function(DateTime selectedDate) onDateSelected;
   final Map<int, String> paidByOptions;
+  final DateTime selectedDate;
 
   const ExpenseOptionsAdv({
     super.key,
     required this.onPaidByChanged,
     required this.onDateSelected,
     required this.paidByOptions,
+    required this.selectedDate,
   });
 
   @override
@@ -85,7 +87,7 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: widget.selectedDate,
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );

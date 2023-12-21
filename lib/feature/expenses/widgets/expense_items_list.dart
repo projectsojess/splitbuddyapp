@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
+import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseItemsList extends StatefulWidget {
@@ -14,6 +15,7 @@ class ExpenseItemsList extends StatefulWidget {
 }
 
 class _ExpenseItemsListState extends State<ExpenseItemsList> {
+  final int userId = SharedPreferenceService.getInt("userId");
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -24,7 +26,7 @@ class _ExpenseItemsListState extends State<ExpenseItemsList> {
           Item item = widget.items[index];
           String itemSharers = '';
           item.usersInvolved!.forEach((user) => itemSharers +=
-              widget.groupData.members[user]! +
+              (user == userId ? 'You' : widget.groupData.members[user]!) +
                   (item.usersInvolved!.last == user ? '' : ','));
           return ListTile(
             leading: Text(

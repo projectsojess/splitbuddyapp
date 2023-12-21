@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
+import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/bill_widget.dart';
 import 'package:splitbuddy/feature/expenses/widgets/sharer_info_widget.dart';
+import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
@@ -25,13 +27,55 @@ class ExpenseDetailScreen extends StatefulWidget {
 }
 
 class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
+  ExpenseService service = ExpenseService();
   final int userId = SharedPreferenceService.getInt("userId");
+  void deleteExpense(int expenseId, int groupId) {
+    service.deleteExpense(
+        expenseId: expenseId,
+        context: context,
+        groupId: groupId,
+        popBack: true);
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isUserPaid = widget.expenseData.payer.payerId == userId;
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (widget.expenseData.type == 'GBA') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddItemScreen(
+                      users: widget.groupData.members,
+                      groupId: widget.groupData.groupId,
+                      fromScreen: 'GBAE',
+                      items: widget.expenseData.items!,
+                      expenseData: widget.expenseData,
+                    ),
+                  ),
+                );
+              }
+            },
+            icon: Icon(
+              Icons.edit,
+              color: Pallete.secondaryColor,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              deleteExpense(
+                  widget.expenseData.expenseId, widget.groupData.groupId);
+            },
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+          ),
+        ],
         title: Text('Expense Details'),
       ),
       body: SingleChildScrollView(

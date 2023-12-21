@@ -74,6 +74,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                                 users: users,
                                 userToFriendId: friends[0].userToFriendId,
                                 fromScreen: 'FBA',
+                                items: [],
                               )),
                     );
                     break;

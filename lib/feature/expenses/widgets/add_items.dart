@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:splitbuddy/common/utils.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense_adv.dart';
 import 'package:splitbuddy/feature/expenses/widgets/shares_dialogue.dart';
@@ -12,13 +13,16 @@ class AddItemScreen extends StatefulWidget {
   final int? userToFriendId;
   final String fromScreen;
   final int? groupId;
-
+  final List<Item> items;
+  final ExpenseData? expenseData;
   const AddItemScreen(
       {super.key,
       required this.users,
       this.groupId,
       this.userToFriendId,
-      required this.fromScreen});
+      required this.fromScreen,
+      required this.items,
+      this.expenseData});
 
   @override
   _AddItemScreenState createState() => _AddItemScreenState();
@@ -27,12 +31,11 @@ class AddItemScreen extends StatefulWidget {
 class _AddItemScreenState extends State<AddItemScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late Map<String, String> _shareTypeOptions;
-  List<Item> items = [];
   int itemLength = 0;
 
   void addItem() {
     setState(() {
-      items.add(Item(
+      widget.items.add(Item(
         name: '',
         amount: 0,
         quantity: 1,
@@ -46,7 +49,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _deleteItem(int index) {
     setState(() {
-      items.removeAt(index);
+      widget.items.removeAt(index);
     });
   }
 
@@ -74,7 +77,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             key: _formKey,
             child: Column(children: <Widget>[
               SizedBox(height: 20),
-              for (int i = 0; i < items.length; i++)
+              for (int i = 0; i < widget.items.length; i++)
                 Card(
                   color: Pallete.cardBgColor,
                   margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -107,6 +110,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             Expanded(
                               flex: 2,
                               child: TextFormField(
+                                initialValue: widget.items[i].name,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a item name';
@@ -117,7 +121,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     customInputFieldDecoration('', 'Name'),
                                 onChanged: (value) {
                                   setState(() {
-                                    items[i].name = value;
+                                    widget.items[i].name = value;
                                   });
                                 },
                                 cursorColor: Pallete.secondaryColor,
@@ -133,7 +137,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             Expanded(
                               flex: 1,
                               child: TextFormField(
-                                initialValue: items[i].quantity.toString(),
+                                initialValue:
+                                    widget.items[i].quantity.toString(),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a quantity';
@@ -144,7 +149,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     customInputFieldDecoration('', 'No\'s'),
                                 onChanged: (value) {
                                   setState(() {
-                                    items[i].quantity =
+                                    widget.items[i].quantity =
                                         int.tryParse(value) ?? 0;
                                   });
                                 },
@@ -162,6 +167,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             ),
                             Expanded(
                               child: TextFormField(
+                                initialValue: widget.items[i].amount == 0
+                                    ? widget.items[i].amount.toStringAsFixed(0)
+                                    : widget.items[i].amount.toString(),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter a amount';
@@ -170,7 +178,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 },
                                 onChanged: (value) {
                                   setState(() {
-                                    items[i].amount =
+                                    widget.items[i].amount =
                                         double.tryParse(value) ?? 0;
                                   });
                                 },
@@ -207,6 +215,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   children: <Widget>[
                                     Container(
                                       child: MultiSelectChipField(
+                                        initialValue:
+                                            widget.items[i].usersInvolved!,
                                         showHeader: false,
                                         decoration: BoxDecoration(
                                           border: Border.all(
@@ -230,11 +240,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                         onTap: (values) {
                                           setState(() {
                                             if (values.length < 2) {
-                                              items[i].shareType = 'T';
+                                              widget.items[i].shareType = 'T';
                                             } else {
-                                              items[i].shareType = 'E';
+                                              widget.items[i].shareType = 'E';
                                             }
-                                            items[i].usersInvolved = values;
+                                            widget.items[i].usersInvolved =
+                                                values;
                                           });
                                         },
                                       ),
@@ -250,7 +261,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         ),
                         Row(
                           children: [
-                            if (items[i].usersInvolved!.length > 1) ...[
+                            if (widget.items[i].usersInvolved!.length > 1) ...[
                               Text(
                                 'Split Type:',
                                 style: TextStyle(
@@ -262,7 +273,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 width: 10,
                               ),
                               DropdownButton<String>(
-                                value: items[i].shareType,
+                                value: widget.items[i].shareType,
                                 onChanged: (newValue) {
                                   if (newValue != 'E') {
                                     showDialog(
@@ -270,16 +281,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                       builder: (BuildContext context) {
                                         return SharesDialogue(
                                           users: widget.users,
-                                          item: items[i],
+                                          item: widget.items[i],
                                         );
                                       },
                                     );
                                     setState(() {
-                                      items[i].shareType = newValue!;
+                                      widget.items[i].shareType = newValue!;
                                     });
                                   } else {
                                     setState(() {
-                                      items[i].shareType = newValue!;
+                                      widget.items[i].shareType = newValue!;
                                     });
                                   }
                                 },
@@ -291,7 +302,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   );
                                 }).toList(),
                               ),
-                              if (items[i].shareType != 'E') ...[
+                              if (widget.items[i].shareType != 'E') ...[
                                 SizedBox(
                                   width: 10,
                                 ),
@@ -313,7 +324,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                             builder: (BuildContext context) {
                                               return SharesDialogue(
                                                   users: widget.users,
-                                                  item: items[i]);
+                                                  item: widget.items[i]);
                                             },
                                           );
                                         },
@@ -338,16 +349,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           Pallete.buttonPrimaryColor),
                     ),
                     onPressed: () {
-                      if (items.length < 15) {
-                        if (items.length > 0) {
-                          if (items[items.length - 1].usersInvolved!.isEmpty) {
+                      if (widget.items.length < 15) {
+                        if (widget.items.length > 0) {
+                          if (widget.items[widget.items.length - 1]
+                              .usersInvolved!.isEmpty) {
                             showSnackbar(context,
                                 "Please add atleast one payee before adding another item");
                           } else {
                             if (_formKey.currentState!.validate()) {
-                              if (items[items.length - 1].shareType == 'P') {
-                                double totalShares =
-                                    items[items.length - 1].totalShares!;
+                              if (widget.items[widget.items.length - 1]
+                                      .shareType ==
+                                  'P') {
+                                double totalShares = widget
+                                    .items[widget.items.length - 1]
+                                    .totalShares!;
                                 if (totalShares != 100) {
                                   showSnackbar(context,
                                       "Total percentage doesn't add upto 100");
@@ -375,7 +390,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       style: TextStyle(color: Pallete.textColor),
                     ),
                   ),
-                  if (items.length > 0) ...[
+                  if (widget.items.length > 0) ...[
                     SizedBox(
                       width: 10,
                     ),
@@ -387,15 +402,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (items[items.length - 1].usersInvolved!.isEmpty) {
+                          if (widget.items[widget.items.length - 1]
+                              .usersInvolved!.isEmpty) {
                             showSnackbar(context,
-                                "Pleae select atleast one user for ${items[items.length - 1].name}");
+                                "Pleae select atleast one user for ${widget.items[widget.items.length - 1].name}");
                           } else {
                             Navigator.push(
                                 context,
                                 CreateExpenseAdvanced.route(
+                                    expenseData: widget.expenseData,
                                     users: widget.users,
-                                    items: items,
+                                    items: widget.items,
                                     fromScreen: widget.fromScreen,
                                     userToFriendId: widget.userToFriendId,
                                     groupId: widget.groupId));

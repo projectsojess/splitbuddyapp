@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/views/expense_detail_screen.dart';
+import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
@@ -16,7 +17,17 @@ class ExpenseTile extends StatefulWidget {
 }
 
 class _ExpenseTileState extends State<ExpenseTile> {
+  ExpenseService service = ExpenseService();
+
   final int userId = SharedPreferenceService.getInt("userId");
+
+  void deleteExpense(int expenseId, int groupId) {
+    service.deleteExpense(
+        expenseId: expenseId,
+        context: context,
+        groupId: groupId,
+        popBack: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +57,7 @@ class _ExpenseTileState extends State<ExpenseTile> {
         ),
       ),
       onDismissed: (direction) {
-        // Implement deletion logic here
-        // You can use this function to remove the expense from the list
-        // or perform any other delete operation.
+        deleteExpense(widget.expense.expenseId, widget.groupData.groupId);
       },
       child: Container(
         decoration: BoxDecoration(

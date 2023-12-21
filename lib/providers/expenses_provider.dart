@@ -26,8 +26,15 @@ class ExpensesProvider extends ChangeNotifier {
   }
 
   void addExpense(String expense) {
-    ExpenseData expenseResponse = ExpenseData.fromJson(jsonDecode(expense));
-    _expenses.add(expenseResponse);
+    List<ExpenseData> expenseResponse = List<ExpenseData>.from(
+        jsonDecode(expense)['expenses']
+            .map((model) => ExpenseData.fromJson(model)));
+    _expenses.add(expenseResponse[0]);
+    notifyListeners();
+  }
+
+  void removeExepnse(int expenseId) {
+    _expenses.removeWhere((expense) => expense.expenseId == expenseId);
     notifyListeners();
   }
 }

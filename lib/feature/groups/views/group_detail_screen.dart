@@ -71,6 +71,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                               users: widget.groupData.members,
                               groupId: widget.groupData.groupId,
                               fromScreen: 'GBA',
+                              items: [],
                             )),
                   );
                   break;

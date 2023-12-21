@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_form_adv.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_options_ad.dart';
@@ -11,6 +14,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
   final int? groupId;
   final List<Item>? items;
   final String fromScreen;
+  final ExpenseData? expenseData;
 
   static route({
     required Map<int, String> users,
@@ -18,6 +22,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
     required String fromScreen,
     int? groupId,
     int? userToFriendId,
+    ExpenseData? expenseData,
   }) =>
       MaterialPageRoute(
           builder: (context) => CreateExpenseAdvanced(
@@ -26,6 +31,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
                 fromScreen: fromScreen,
                 groupId: groupId,
                 userToFriendId: userToFriendId,
+                expenseData: expenseData,
               ));
 
   const CreateExpenseAdvanced(
@@ -34,7 +40,8 @@ class CreateExpenseAdvanced extends StatefulWidget {
       this.items,
       this.userToFriendId,
       this.groupId,
-      required this.fromScreen});
+      required this.fromScreen,
+      this.expenseData});
 
   @override
   State<CreateExpenseAdvanced> createState() => _CreateExpenseNormalState();
@@ -95,6 +102,13 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
       _untaxedAmount += (item.amount * item.quantity);
     });
     untaxedAmountController.text = _untaxedAmount.toStringAsFixed(2);
+    if (widget.fromScreen == 'GBAE') {
+      taxController.text = widget.expenseData!.tax.toString();
+      serviceChargeController.text =
+          widget.expenseData!.serviceCharge.toString();
+      descrptionController.text = widget.expenseData!.description;
+      _selectedDate = widget.expenseData!.date;
+    }
     amountController.text = _untaxedAmount.toStringAsFixed(2);
     taxController.addListener(calculateTotalAmount);
     serviceChargeController.addListener(calculateTotalAmount);
@@ -129,6 +143,7 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
                     ExpenseOptionsAdv(
                         onPaidByChanged: handlePaidByChanged,
                         onDateSelected: handleDateSelected,
+                        selectedDate: _selectedDate,
                         paidByOptions: widget.users),
                     SizedBox(
                       height: 20,
@@ -141,21 +156,35 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
                         untaxedAmountController: untaxedAmountController,
                         taxController: taxController,
                         serviceChargeController: serviceChargeController),
-                    ElevatedButton.icon(
-                      icon: Icon(Icons.add),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.orange,
-                        onPrimary: Colors.white,
+                    if (widget.fromScreen == 'GBA') ...[
+                      ElevatedButton.icon(
+                        icon: Icon(Icons.add),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange,
+                          onPrimary: Colors.white,
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            addExpense();
+                          }
+                        },
+                        label: Text('Add Expense'),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Perform your submission logic here
-                          // Handle the submitted data as needed
-                          addExpense();
-                        }
-                      },
-                      label: Text('Add Expense'),
-                    ),
+                    ],
+                    if (widget.fromScreen == 'GBAE') ...[
+                      ElevatedButton(
+                        child: Text('Save'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange,
+                          onPrimary: Colors.white,
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            print(widget.fromScreen);
+                          }
+                        },
+                      ),
+                    ]
                   ],
                 )),
           ),

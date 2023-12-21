@@ -46,6 +46,7 @@ class _ExpenseListState extends State<ExpenseList> {
                           users: widget.groupData.members,
                           groupId: widget.groupData.groupId,
                           fromScreen: 'GBA',
+                          items: [],
                         ),
                       ),
                     );

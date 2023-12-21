@@ -131,37 +131,61 @@ class ExpenseService {
     double? untaxedAmount,
     double? totalAmount,
   }) async {
+    var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
+    ExpensesAdv expensesAdv = ExpensesAdv(
+      payerId: payerId,
+      date: date,
+      description: description,
+      type: fromScreen,
+      userToFriendId: userToFriendId,
+      groupId: groupId,
+      tax: tax,
+      serviceCharge: serviceCharge,
+      untaxedAmount: untaxedAmount,
+      totalAmount: totalAmount,
+      items: items,
+    );
+
+    http.Response response = await http.post(
+        Uri.parse(ServerConstants.addExpenseUrl),
+        body: jsonEncode(expensesAdv),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token));
+
+    httpErrorHandle(
+        response: response,
+        context: context,
+        onSuccess: () {
+          if (fromScreen == 'FBA' || fromScreen == 'GBA') {
+            expenseProvider.addExpense(response.body);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+        });
+  }
+
+  void deleteExpense(
+      {required int expenseId,
+      required BuildContext context,
+      required bool popBack,
+      int? groupId,
+      int? userToFriendId}) async {
+    var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
     try {
-      ExpensesAdv expensesAdv = ExpensesAdv(
-        payerId: payerId,
-        date: date,
-        description: description,
-        type: fromScreen,
-        userToFriendId: userToFriendId,
-        groupId: groupId,
-        tax: tax,
-        serviceCharge: serviceCharge,
-        untaxedAmount: untaxedAmount,
-        totalAmount: totalAmount,
-        items: items,
+      http.Response response = await http.delete(
+        Uri.parse(
+            '${ServerConstants.deleteExpenseUrl}?expenseId=${expenseId.toString()}${groupId != null ? '&groupId=$groupId' : ''} ${userToFriendId != null ? '&userToFriendId=$userToFriendId' : ''}'),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token),
       );
-      print(jsonEncode(expensesAdv));
-      http.Response response = await http.post(
-          Uri.parse(ServerConstants.addExpenseUrl),
-          body: jsonEncode(expensesAdv),
-          headers: RequestHeaders.getAuthenticatedHeaders(token: token));
 
       httpErrorHandle(
           response: response,
           context: context,
-          onSuccess: () {
-            if (fromScreen == 'FBA' || fromScreen == 'GBA') {
-              Navigator.pop(context);
+          onSuccess: () async {
+            expenseProvider.removeExepnse(expenseId);
+            if (popBack) {
               Navigator.pop(context);
             }
           });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 }
