@@ -12,12 +12,16 @@ import 'package:splitbuddy/dtos/expenses_adv.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/dtos/payer_payee.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/providers/group_provider.dart';
 import 'package:splitbuddy/services/friends_service.dart';
+import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
   String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
+  int userId = SharedPreferenceService.getInt("userId");
   FriendsService _friendsService = FriendsService();
+  GroupService _groupService = GroupService();
   void createExpenseNormal({
     required BuildContext context,
     required int payerId,
@@ -132,6 +136,7 @@ class ExpenseService {
     double? totalAmount,
   }) async {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
+    var groupProvider = Provider.of<GroupProvider>(context, listen: false);
     ExpensesAdv expensesAdv = ExpensesAdv(
       payerId: payerId,
       date: date,

@@ -19,4 +19,12 @@ class GroupProvider extends ChangeNotifier {
     _groups = groupResponses;
     notifyListeners();
   }
+
+  void updateGroup(String group) {
+    GroupData groupData = GroupData.fromJson(jsonDecode(group));
+    int index =
+        _groups.indexWhere((element) => element.groupId == groupData.groupId);
+    _groups[index] = groupData;
+    notifyListeners();
+  }
 }

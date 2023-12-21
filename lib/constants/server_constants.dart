@@ -15,4 +15,5 @@ class ServerConstants {
   static const String createGroupUrl = '$_serverUrl/api/groups/create-group';
 
   static const String getAllGroupsUrl = '$_serverUrl/api/groups/get-groups';
+  static const String getGroupUrl = '$_serverUrl/api/groups/get-group';
 }

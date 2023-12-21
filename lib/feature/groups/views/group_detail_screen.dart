@@ -9,6 +9,7 @@ import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
 import 'package:splitbuddy/feature/groups/widgets/overview.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
@@ -28,9 +29,20 @@ class GroupDetailScreen extends StatefulWidget {
 
 class _GroupDetailScreenState extends State<GroupDetailScreen> {
   int userId = SharedPreferenceService.getInt("userId");
+  GroupService service = GroupService();
   GroupDetailTab _currentTab = GroupDetailTab.Expenses;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
+        .expenses
+        .where((element) => element.groupId == widget.groupData.groupId)
+        .toList();
     double amountBorrowed = widget.groupData.amountBorrowed;
     double amountLent = widget.groupData.amountLent;
     bool isDebt = amountBorrowed > amountLent;
@@ -39,11 +51,6 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
 
     String prefix = isDebt ? "You owe: " : "You get back: ";
     Color color = isDebt ? Colors.red : Colors.green;
-    List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
-        .expenses
-        .where((element) => element.groupId == widget.groupData.groupId)
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.groupData.groupName),
@@ -197,5 +204,28 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
       case GroupDetailTab.Overview:
         return 'Overview'; // Modify as needed for additional tabs
     }
+  }
+
+  double _calculateAmountBorrowedByUser(List<ExpenseData> expenses) {
+    double amountBorrowed = 0;
+    expenses.forEach((expense) {
+      bool payeeFound = expense.payees.any((payee) => payee.payeeId == userId);
+      if (payeeFound) {
+        amountBorrowed +=
+            expense.payees.firstWhere((payee) => payee.payeeId == userId).share;
+      }
+    });
+    return amountBorrowed;
+  }
+
+  double _calculateAmountLentByUser(List<ExpenseData> expenses) {
+    double amountLent = 0;
+    expenses.forEach((expense) {
+      bool payerFound = expense.payer.payerId == userId;
+      if (payerFound) {
+        amountLent += (expense.payer.payedAmount - expense.payer.share);
+      }
+    });
+    return amountLent;
   }
 }

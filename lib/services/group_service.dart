@@ -48,4 +48,20 @@ class GroupService {
           groupProvider.addAllGroups(response.body);
         });
   }
+
+  void getGroup({required context, required int groupId}) async {
+    var groupProvider = Provider.of<GroupProvider>(context, listen: false);
+
+    http.Response response = await http.get(
+      Uri.parse('${ServerConstants.getGroupUrl}/${groupId}'),
+      headers: RequestHeaders.getAuthenticatedHeaders(token: token),
+    );
+
+    httpErrorHandle(
+        response: response,
+        context: context,
+        onSuccess: () {
+          groupProvider.updateGroup(response.body);
+        });
+  }
 }

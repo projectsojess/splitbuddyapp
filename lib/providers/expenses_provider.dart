@@ -29,7 +29,7 @@ class ExpensesProvider extends ChangeNotifier {
     List<ExpenseData> expenseResponse = List<ExpenseData>.from(
         jsonDecode(expense)['expenses']
             .map((model) => ExpenseData.fromJson(model)));
-    _expenses.add(expenseResponse[0]);
+    _expenses.insert(0, expenseResponse[0]);
     notifyListeners();
   }
 
