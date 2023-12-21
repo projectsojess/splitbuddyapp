@@ -61,7 +61,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   //   // CreateExpenseNormal.route(friend: friends),
                   // );
                   break;
-                case 'advancedExpense':
+                case 'Split a bill':
                   // Navigate to the advanced expense screen
                   // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
                   Navigator.push(
