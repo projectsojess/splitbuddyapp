@@ -94,7 +94,8 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
     widget.items!.forEach((item) {
       _untaxedAmount += (item.amount * item.quantity);
     });
-    untaxedAmountController.text = _untaxedAmount.toString();
+    untaxedAmountController.text = _untaxedAmount.toStringAsFixed(2);
+    amountController.text = _untaxedAmount.toStringAsFixed(2);
     taxController.addListener(calculateTotalAmount);
     serviceChargeController.addListener(calculateTotalAmount);
   }

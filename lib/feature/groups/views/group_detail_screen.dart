@@ -43,6 +43,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         .expenses
         .where((element) => element.groupId == widget.groupData.groupId)
         .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.groupData.groupName),
@@ -113,7 +114,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 width: 10,
               ),
               Text(
-                debt.toString(),
+                debt.toStringAsFixed(2),
                 style: TextStyle(
                   color: color,
                   fontSize: 20,
@@ -126,13 +127,13 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
             height: 20,
           ),
           Container(
-            padding: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               // color: Pallete.cardBgColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Loop through enum values to create buttons dynamically
                 for (GroupDetailTab tab in GroupDetailTab.values)
@@ -173,7 +174,9 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               ? ExpenseList(expenses: expenses, groupData: widget.groupData)
               : _currentTab == GroupDetailTab.Overview
                   ? OverViewTab(
-                      memberData: widget.groupData.memberData,
+                      groupData: widget.groupData,
+                      expenses: expenses,
+                      userId: userId,
                     )
                   : MembersList(
                       members: widget.groupData.members,

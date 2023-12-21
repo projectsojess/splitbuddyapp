@@ -22,7 +22,7 @@ class GroupItem extends StatelessWidget {
       ),
       title: Text(groupData.groupName),
       trailing: Text(
-        '${prefix}\$ ${debt}',
+        '${prefix}\$ ${debt.toStringAsFixed(2)}',
         style: TextStyle(color: color),
       ),
       onTap: onTap,
