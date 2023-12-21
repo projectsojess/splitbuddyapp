@@ -61,7 +61,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   //   // CreateExpenseNormal.route(friend: friends),
                   // );
                   break;
-                case 'Split a bill':
+                case 'advancedExpense':
                   // Navigate to the advanced expense screen
                   // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
                   Navigator.push(
@@ -85,7 +85,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               ),
               const PopupMenuItem<String>(
                 value: 'advancedExpense',
-                child: Text('Advanced Expense'),
+                child: Text('Split a bill'),
               ),
               // Add more PopupMenuItems for other actions
             ],
