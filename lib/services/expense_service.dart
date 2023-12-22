@@ -7,8 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:splitbuddy/common/common.dart';
 import 'package:http/http.dart' as http;
 import 'package:splitbuddy/constants/constants.dart';
+import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/expenses.dart';
 import 'package:splitbuddy/dtos/expenses_adv.dart';
+import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/dtos/payer_payee.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
@@ -161,7 +163,13 @@ class ExpenseService {
         context: context,
         onSuccess: () {
           if (fromScreen == 'FBA' || fromScreen == 'GBA') {
+            ExpenseData expenseData =
+                ExpenseData.fromJson(jsonDecode(response.body));
+            GroupData groupData = groupProvider.groups
+                .firstWhere((group) => group.groupId == groupId);
+
             expenseProvider.addExpense(response.body);
+
             Navigator.pop(context);
             Navigator.pop(context);
           }
@@ -171,7 +179,6 @@ class ExpenseService {
   void deleteExpense(
       {required int expenseId,
       required BuildContext context,
-      required bool popBack,
       int? groupId,
       int? userToFriendId}) async {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
@@ -187,10 +194,56 @@ class ExpenseService {
           context: context,
           onSuccess: () async {
             expenseProvider.removeExepnse(expenseId);
-            if (popBack) {
-              Navigator.pop(context);
-            }
           });
     } catch (e) {}
+  }
+
+  void editExpense({
+    required BuildContext context,
+    required int payerId,
+    required String date,
+    required String description,
+    required String fromScreen,
+    int? userToFriendId,
+    int? groupId,
+    required List<Item> items,
+    int? totalShares,
+    double? tax,
+    double? serviceCharge,
+    double? untaxedAmount,
+    double? totalAmount,
+    required int expenseId,
+    required int createdById,
+  }) async {
+    var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
+    var groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    ExpensesAdv expensesAdv = ExpensesAdv(
+      createdById: createdById,
+      expenseId: expenseId,
+      payerId: payerId,
+      date: date,
+      description: description,
+      type: fromScreen,
+      userToFriendId: userToFriendId,
+      groupId: groupId,
+      tax: tax,
+      serviceCharge: serviceCharge,
+      untaxedAmount: untaxedAmount,
+      totalAmount: totalAmount,
+      items: items,
+    );
+    http.Response response = await http.put(
+        Uri.parse(ServerConstants.editExpenseUrl),
+        body: jsonEncode(expensesAdv),
+        headers: RequestHeaders.getAuthenticatedHeaders(token: token));
+
+    httpErrorHandle(
+        response: response,
+        context: context,
+        onSuccess: () {
+          expenseProvider.editExpense(response.body);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
   }
 }

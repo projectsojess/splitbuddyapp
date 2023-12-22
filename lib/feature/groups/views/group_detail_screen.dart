@@ -1,14 +1,10 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
-import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
-import 'package:splitbuddy/feature/groups/widgets/overview.dart';
-import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/providers/group_provider.dart';
 import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
@@ -20,8 +16,8 @@ enum GroupDetailTab {
 }
 
 class GroupDetailScreen extends StatefulWidget {
-  final GroupData groupData;
-  const GroupDetailScreen({super.key, required this.groupData});
+  final int groupId;
+  const GroupDetailScreen({super.key, required this.groupId});
 
   @override
   State<GroupDetailScreen> createState() => _GroupDetailScreenState();
@@ -39,159 +35,155 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
-        .expenses
-        .where((element) => element.groupId == widget.groupData.groupId)
-        .toList();
-    double amountBorrowed = widget.groupData.amountBorrowed;
-    double amountLent = widget.groupData.amountLent;
-    bool isDebt = amountBorrowed > amountLent;
-    double debt =
-        isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
+    return Consumer<GroupProvider>(builder: (context, groupProvider, child) {
+      var groupData = groupProvider.groups
+          .firstWhere((group) => group.groupId == widget.groupId);
+      double amountBorrowed = groupData.amountBorrowed;
+      double amountLent = groupData.amountLent;
+      bool isDebt = amountBorrowed > amountLent;
+      double debt =
+          isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
 
-    String prefix = isDebt ? "You owe: " : "You get back: ";
-    Color color = isDebt ? Colors.red : Colors.green;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.groupData.groupName),
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(
-              Icons.add, // Plus icon
-              color: Pallete.secondaryColor, // Set the color to orange
-            ),
-            onSelected: (value) {
-              switch (value) {
-                case 'addExpense':
-                  // Navigator.push(
-                  //   context,
-                  //   // CreateExpenseNormal.route(friend: friends),
-                  // );
-                  break;
-                case 'advancedExpense':
-                  // Navigate to the advanced expense screen
-                  // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddItemScreen(
-                              users: widget.groupData.members,
-                              groupId: widget.groupData.groupId,
-                              fromScreen: 'GBA',
-                              items: [],
-                            )),
-                  );
-                  break;
-                // Add mor
-                // Add more cases for other actions/screens
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'addExpense',
-                child: Text('Add Expense'),
+      String prefix = isDebt ? "You owe: " : "You get back: ";
+      Color color = isDebt ? Colors.red : Colors.green;
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(groupData.groupName),
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.add, // Plus icon
+                color: Pallete.secondaryColor, // Set the color to orange
               ),
-              const PopupMenuItem<String>(
-                value: 'advancedExpense',
-                child: Text('Split a bill'),
-              ),
-              // Add more PopupMenuItems for other actions
-            ],
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 20,
-              ),
-              Text(
-                prefix,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Pallete.textColor,
+              onSelected: (value) {
+                switch (value) {
+                  case 'addExpense':
+                    // Navigator.push(
+                    //   context,
+                    //   // CreateExpenseNormal.route(friend: friends),
+                    // );
+                    break;
+                  case 'advancedExpense':
+                    // Navigate to the advanced expense screen
+                    // Replace 'YourAdvancedExpenseScreen' with the actual screen you want to navigate to
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddItemScreen(
+                                users: groupData.members,
+                                groupId: groupData.groupId,
+                                fromScreen: 'GBA',
+                                items: [],
+                              )),
+                    );
+                    break;
+                  // Add mor
+                  // Add more cases for other actions/screens
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'addExpense',
+                  child: Text('Add Expense'),
                 ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                debt.toStringAsFixed(2),
-                style: TextStyle(
-                  color: color,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                const PopupMenuItem<String>(
+                  value: 'advancedExpense',
+                  child: Text('Split a bill'),
                 ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              // color: Pallete.cardBgColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Loop through enum values to create buttons dynamically
-                for (GroupDetailTab tab in GroupDetailTab.values)
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentTab = tab;
-                      });
-                    },
-                    style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                8.0), // Set your desired border radius here
-                            // You can also adjust other properties like side for a border
-                            // side: BorderSide(color: Colors.red, width: 2.0),
-                          ),
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            _currentTab == tab
-                                ? Pallete.secondaryColor
-                                : Pallete.buttonPrimaryColor)),
-
-                    child: Text(
-                      _tabName(tab),
-                      style: TextStyle(
-                        color: _currentTab == tab
-                            ? Colors.white
-                            : Pallete.textColor,
-                      ),
-                    ), // Get tab name dynamically
-                  ),
+                // Add more PopupMenuItems for other actions
               ],
             ),
-          ),
-          _currentTab == GroupDetailTab.Expenses
-              ? ExpenseList(expenses: expenses, groupData: widget.groupData)
-              : _currentTab == GroupDetailTab.Overview
-                  ? OverViewTab(
-                      groupData: widget.groupData,
-                      expenses: expenses,
-                      userId: userId,
-                    )
-                  : MembersList(
-                      members: widget.groupData.members,
-                    )
-        ],
-      ),
-    );
+          ],
+        ),
+        body: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  prefix,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Pallete.textColor,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  debt.toStringAsFixed(2),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                // color: Pallete.cardBgColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Loop through enum values to create buttons dynamically
+                  for (GroupDetailTab tab in GroupDetailTab.values)
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _currentTab = tab;
+                        });
+                      },
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8.0), // Set your desired border radius here
+                              // You can also adjust other properties like side for a border
+                              // side: BorderSide(color: Colors.red, width: 2.0),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              _currentTab == tab
+                                  ? Pallete.secondaryColor
+                                  : Pallete.buttonPrimaryColor)),
+
+                      child: Text(
+                        _tabName(tab),
+                        style: TextStyle(
+                          color: _currentTab == tab
+                              ? Colors.white
+                              : Pallete.textColor,
+                        ),
+                      ), // Get tab name dynamically
+                    ),
+                ],
+              ),
+            ),
+            _currentTab == GroupDetailTab.Expenses
+                ? ExpenseList(groupData: groupData)
+                : _currentTab == GroupDetailTab.Overview
+                    ? Container()
+                    : MembersList(
+                        members: groupData.members,
+                      )
+          ],
+        ),
+      );
+    });
   }
 
   String _tabName(GroupDetailTab tab) {

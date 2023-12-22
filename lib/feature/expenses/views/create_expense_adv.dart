@@ -95,6 +95,24 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
         items: widget.items!);
   }
 
+  void editExpense(int expenseId, int createdById) {
+    service.editExpense(
+        createdById: createdById,
+        expenseId: expenseId,
+        context: context,
+        payerId: _paidBy,
+        fromScreen: widget.fromScreen,
+        date: _selectedDate.toIso8601String(),
+        description: descrptionController.text,
+        userToFriendId: widget.userToFriendId,
+        groupId: widget.groupId,
+        tax: double.tryParse(taxController.text) ?? 0,
+        untaxedAmount: double.tryParse(untaxedAmountController.text) ?? 0,
+        totalAmount: double.tryParse(amountController.text) ?? 0,
+        serviceCharge: double.tryParse(serviceChargeController.text) ?? 0,
+        items: widget.items!);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -180,7 +198,8 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            print(widget.fromScreen);
+                            editExpense(widget.expenseData!.expenseId,
+                                widget.expenseData!.createdById);
                           }
                         },
                       ),

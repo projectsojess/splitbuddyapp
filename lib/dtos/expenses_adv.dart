@@ -24,7 +24,7 @@ class ExpensesAdv {
   double? tax;
   double? serviceCharge;
   double? untaxedAmount;
-  double? totalAmount;
+  final double? totalAmount;
 
   ExpensesAdv({
     this.payee,
@@ -42,7 +42,7 @@ class ExpensesAdv {
     this.tax,
     this.serviceCharge,
     this.untaxedAmount,
-    this.totalAmount,
+    required this.totalAmount,
   });
   factory ExpensesAdv.fromJson(Map<String, dynamic> json) =>
       _$ExpensesAdvFromJson(json);

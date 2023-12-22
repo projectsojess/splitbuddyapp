@@ -23,10 +23,10 @@ class _ExpenseTileState extends State<ExpenseTile> {
 
   void deleteExpense(int expenseId, int groupId) {
     service.deleteExpense(
-        expenseId: expenseId,
-        context: context,
-        groupId: groupId,
-        popBack: false);
+      expenseId: expenseId,
+      context: context,
+      groupId: groupId,
+    );
   }
 
   @override
@@ -67,10 +67,17 @@ class _ExpenseTileState extends State<ExpenseTile> {
             contentPadding: EdgeInsets.all(16.0),
             onTap: () {
               Navigator.push(
-                  context,
-                  ExpenseDetailScreen.route(
-                      expenseData: widget.expense,
-                      groupData: widget.groupData));
+                      context,
+                      ExpenseDetailScreen.route(
+                          expenseId: widget.expense.expenseId,
+                          groupData: widget.groupData))
+                  .then((value) {
+                if (value != null && value == 'delete') {
+                  print(value);
+                  deleteExpense(
+                      widget.expense.expenseId, widget.expense.expenseId);
+                }
+              });
             },
             leading: Container(
               child: Column(

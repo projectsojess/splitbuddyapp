@@ -3,12 +3,17 @@ import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
-class SharerInfoWidget extends StatelessWidget {
+class SharerInfoWidget extends StatefulWidget {
   final ExpenseData expenseData;
   final bool isUserPayer;
   const SharerInfoWidget(
       {super.key, required this.expenseData, required this.isUserPayer});
 
+  @override
+  State<SharerInfoWidget> createState() => _SharerInfoWidgetState();
+}
+
+class _SharerInfoWidgetState extends State<SharerInfoWidget> {
   @override
   Widget build(BuildContext context) {
     int userId = SharedPreferenceService.getInt('userId');
@@ -34,35 +39,35 @@ class SharerInfoWidget extends StatelessWidget {
             color: Pallete.secondaryColor,
           ),
           title: Text(
-            '${isUserPayer ? 'You' : expenseData.payer.payerName} owe',
+            '${widget.isUserPayer ? 'You' : widget.expenseData.payer.payerName} owe',
             style: TextStyle(
               color: Pallete.textColor,
               fontSize: 15,
             ),
           ),
           trailing: Text(
-            expenseData.payer.share.toStringAsFixed(2),
+            widget.expenseData.payer.share.toStringAsFixed(2),
             style: TextStyle(
               color: Pallete.textColor,
               fontSize: 15,
             ),
           ),
         ),
-        for (int i = 0; i < expenseData.payees.length; i++)
+        for (int i = 0; i < widget.expenseData.payees.length; i++)
           ListTile(
             leading: Icon(
               Icons.attach_money_sharp,
               color: Pallete.secondaryColor,
             ),
             title: Text(
-              '${!isUserPayer ? expenseData.payees[i].payeeId == userId ? 'You' : expenseData.payees[i].payeeName : expenseData.payees[i].payeeName} owe',
+              '${!widget.isUserPayer ? widget.expenseData.payees[i].payeeId == userId ? 'You' : widget.expenseData.payees[i].payeeName : widget.expenseData.payees[i].payeeName} owe',
               style: TextStyle(
                 color: Pallete.textColor,
                 fontSize: 15,
               ),
             ),
             trailing: Text(
-              expenseData.payees[i].share.toStringAsFixed(2),
+              widget.expenseData.payees[i].share.toStringAsFixed(2),
               style: TextStyle(
                 color: Pallete.textColor,
                 fontSize: 15,

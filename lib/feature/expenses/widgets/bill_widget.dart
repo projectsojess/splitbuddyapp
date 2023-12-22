@@ -5,16 +5,22 @@ import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_items_list.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
-class BillWidget extends StatelessWidget {
+class BillWidget extends StatefulWidget {
   final GroupData groupData;
   final ExpenseData expense;
   const BillWidget({super.key, required this.expense, required this.groupData});
 
   @override
+  State<BillWidget> createState() => _BillWidgetState();
+}
+
+class _BillWidgetState extends State<BillWidget> {
+  @override
   Widget build(BuildContext context) {
-    double taxAmount = expense.untaxedAmount! * (expense.tax! / 100);
+    double taxAmount =
+        widget.expense.untaxedAmount! * (widget.expense.tax! / 100);
     double serviceChargeAmount =
-        expense.untaxedAmount! * (expense.serviceCharge! / 100);
+        widget.expense.untaxedAmount! * (widget.expense.serviceCharge! / 100);
     return Column(
       children: [
         Container(
@@ -57,11 +63,11 @@ class BillWidget extends StatelessWidget {
           ),
         ),
         ExpenseItemsList(
-          items: expense.items!,
-          groupData: groupData,
+          items: widget.expense.items!,
+          groupData: widget.groupData,
         ),
         getUnderLine(),
-        if (expense.tax != 0) ...[
+        if (widget.expense.tax != 0) ...[
           ListTile(
             title: Text(
               'Tax',
@@ -71,7 +77,7 @@ class BillWidget extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              '${taxAmount.toStringAsFixed(2)} (${expense.tax!.toStringAsFixed(2)}%)',
+              '${taxAmount.toStringAsFixed(2)} (${widget.expense.tax!.toStringAsFixed(2)}%)',
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 15,
@@ -79,7 +85,7 @@ class BillWidget extends StatelessWidget {
             ),
           )
         ],
-        if (expense.serviceCharge != 0) ...[
+        if (widget.expense.serviceCharge != 0) ...[
           ListTile(
             title: Text(
               'Service Charge',
@@ -89,7 +95,7 @@ class BillWidget extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              '${serviceChargeAmount.toStringAsFixed(2)} (${expense.serviceCharge!.toStringAsFixed(2)}%)',
+              '${serviceChargeAmount.toStringAsFixed(2)} (${widget.expense.serviceCharge!.toStringAsFixed(2)}%)',
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 15,
@@ -107,7 +113,7 @@ class BillWidget extends StatelessWidget {
             ),
           ),
           trailing: Text(
-            expense.untaxedAmount!.toStringAsFixed(2),
+            widget.expense.untaxedAmount!.toStringAsFixed(2),
             style: TextStyle(
               color: Pallete.textColor,
               fontSize: 15,
@@ -123,7 +129,7 @@ class BillWidget extends StatelessWidget {
             ),
           ),
           trailing: Text(
-            expense.totalAmount.toStringAsFixed(2),
+            widget.expense.totalAmount.toStringAsFixed(2),
             style: TextStyle(
               color: Pallete.textColor,
               fontSize: 15,

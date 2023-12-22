@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
@@ -11,20 +12,20 @@ class ExpenseData {
   final int? groupId;
   final int createdById;
   final String createdByName;
-  final DateTime date;
-  final String description;
-  final double? tax;
-  final double? untaxedAmount;
-  final double totalAmount;
-  final double? serviceCharge;
-  final ExpensePayer payer;
-  final List<Item>? items;
-  final List<ExpensePayee> payees;
-  final String type;
-  final String? category;
-  final double? totalShares;
-  final String? shareType;
-  final bool settled;
+  DateTime date;
+  String description;
+  double? tax;
+  double? untaxedAmount;
+  double totalAmount;
+  double? serviceCharge;
+  ExpensePayer payer;
+  List<Item>? items;
+  List<ExpensePayee> payees;
+  String type;
+  String? category;
+  double? totalShares;
+  String? shareType;
+  bool settled;
 
   ExpenseData({
     required this.expenseId,
