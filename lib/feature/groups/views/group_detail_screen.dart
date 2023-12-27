@@ -4,6 +4,7 @@ import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
+import 'package:splitbuddy/feature/groups/widgets/overview.dart';
 import 'package:splitbuddy/providers/group_provider.dart';
 import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
@@ -176,7 +177,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
             _currentTab == GroupDetailTab.Expenses
                 ? ExpenseList(groupData: groupData)
                 : _currentTab == GroupDetailTab.Overview
-                    ? Container()
+                    ? OverViewTab(groupData: groupData, userId: userId)
                     : MembersList(
                         members: groupData.members,
                       )

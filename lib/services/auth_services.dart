@@ -21,12 +21,14 @@ class AuthService {
   }) async {
     try {
       User user = User(
+          country: '',
           userId: 0,
           username: username,
           email: email,
           token: '',
           password: password,
-          phone: phone);
+          phone: phone,
+          currency: '');
 
       http.Response res = await http.post(
         Uri.parse(ServerConstants.signupUrl),

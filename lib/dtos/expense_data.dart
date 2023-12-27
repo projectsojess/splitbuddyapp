@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';

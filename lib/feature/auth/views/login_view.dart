@@ -75,6 +75,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   )),
               AuthField(
+                obscureText: false,
                 controller: emailController,
                 hintText: 'Enter your email',
                 iconPath: iconPathEmail,
@@ -90,6 +91,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   )),
               AuthField(
+                obscureText: true,
                 controller: passwordController,
                 hintText: 'Enter your password',
                 iconPath: iconPathPassword,

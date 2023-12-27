@@ -52,8 +52,8 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             buildNavBarItem(Icons.home, 0),
-            buildNavBarItem(Icons.people_alt, 1),
-            buildNavBarItem(Icons.group_outlined, 2),
+            buildNavBarItem(Icons.person, 1),
+            buildNavBarItem(Icons.group, 2),
             buildNavBarItem(Icons.account_circle, 3),
           ],
         ),

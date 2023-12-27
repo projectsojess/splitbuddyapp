@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/country.dart';
+import 'package:splitbuddy/dtos/user.dart';
 import 'package:splitbuddy/feature/auth/views/login_view.dart';
+import 'package:splitbuddy/feature/auth/views/user_detail_screen.dart';
 import 'package:splitbuddy/feature/auth/widgets/auth_field.dart';
 import 'package:splitbuddy/services/auth_services.dart';
 import 'package:splitbuddy/themes/pallete.dart';
@@ -37,6 +39,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ? _selectedCountry!.code + phoneNumberController.text
           : '',
     );
+  }
+
+  void loadUserDetailScreen() {
+    User userData = User(
+      userId: 0,
+      username: '',
+      email: emailController.text,
+      token: '',
+      password: passwordController.text,
+      currency: _selectedCountry!.code,
+      country: _selectedCountry!.code,
+      phone: phoneNumberController.text != ''
+          ? _selectedCountry!.code + phoneNumberController.text
+          : '',
+    );
+    Navigator.push(
+        context, UserDetailScreen.route(userData: userData, context: context));
   }
 
   List<Country> _countries = []; // Initialize _countries as an empty list
@@ -98,6 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: emailController,
                 hintText: 'Enter your email',
                 iconPath: iconPathEmail,
+                obscureText: false,
               ),
               Container(
                   padding: EdgeInsets.all(12),
@@ -113,6 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: passwordController,
                 hintText: 'Enter your password',
                 iconPath: iconPathPassword,
+                obscureText: true,
               ),
               Container(
                   padding: EdgeInsets.all(12),
@@ -141,7 +162,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       icon: Icon(
                         Icons.arrow_drop_down,
-                        color: Pallete.authIconsColor,
+                        color: Pallete.inputFieldIconColor,
                       ),
                       elevation: 2,
                       underline: Container(),
@@ -179,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             hintText: '         (Optional)',
                             suffixIcon: UIConstants.getSVGIcon(
-                                iconPathDialpad, Pallete.authIconsColor),
+                                iconPathDialpad, Pallete.inputFieldIconColor),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30.0),
                               borderSide: BorderSide.none,
@@ -200,7 +221,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    signUpUser();
+                    // signUpUser();
+                    loadUserDetailScreen();
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Pallete.buttonBgcolor,

@@ -54,7 +54,7 @@ class WelcomePage extends StatelessWidget {
                           AssetConstants.arrowRight,
                           width: 40,
                           height: 40,
-                          color: Pallete.inputLabelTextColor,
+                          color: Pallete.backgroundColor,
                         ),
                       ),
                     ))

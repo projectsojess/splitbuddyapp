@@ -6,7 +6,7 @@ import "package:splitbuddy/themes/pallete.dart";
 class UIConstants {
   static Text getAppTitle(double fontSize) {
     return Text(
-      'SplitBuddy',
+      'SplitBuddies',
       style: TextStyle(
         fontSize: fontSize,
         fontWeight: FontWeight.bold,

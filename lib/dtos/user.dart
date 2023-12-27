@@ -1,13 +1,16 @@
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+part 'user.g.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+@JsonSerializable(includeIfNull: false)
 class User {
   final int userId;
-  final String username;
-  final String email;
+  String username;
+  String email;
   final String token;
-  final String password;
+  String password;
   String? phone;
+  String currency;
+  String country;
 
   User(
       {required this.userId,
@@ -15,42 +18,10 @@ class User {
       required this.email,
       required this.token,
       required this.password,
+      required this.currency,
+      required this.country,
       this.phone});
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
-      'username': username,
-      'email': email,
-      'password': password,
-    };
-
-    // Only add non-empty values to the map for serialization
-    if (userId != 0) {
-      map['userId'] = userId;
-    }
-    if (token.isNotEmpty) {
-      map['token'] = token;
-    }
-    if (phone != null && phone!.isNotEmpty) {
-      map['phone'] = phone!;
-    }
-
-    return map;
-  }
-
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      userId: map['userId'] as int,
-      username: map['username'] as String,
-      email: map['email'] as String,
-      token: map['token'] as String,
-      password: map['password'] as String,
-      phone: map['phone'] as String?,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory User.fromJson(String source) =>
-      User.fromMap(json.decode(source) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }

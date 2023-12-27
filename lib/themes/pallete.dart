@@ -4,11 +4,11 @@ class Pallete {
   static const Color backgroundColor = Colors.white;
   static const Color textColor = Colors.black;
   static const Color cardBgColor = Color.fromARGB(255, 255, 245, 222);
-  static const Color inputFieldBgColor = Color(0xFF333333);
+  static const Color inputFieldBgColor = Color.fromRGBO(227, 227, 227, 0.54);
   static const Color inputLabelTextColor = Colors.black;
-  static const inputFieldTextColor = Color(0xFFbababa);
+  static const inputFieldTextColor = Colors.black;
   static const buttonBgcolor = Color(0xFFed7501);
-  static const authIconsColor = Colors.white;
+  static const inputFieldIconColor = Colors.black;
   static const primaryColor = Color(0xFF161616);
   static const secondaryColor = Color(0xFFed7501);
   static const cursorColor = Color(0xFFed7501);
