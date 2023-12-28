@@ -6,7 +6,9 @@ class ExpenseOptionsAdv extends StatefulWidget {
   final ValueChanged<int> onPaidByChanged;
   final Function(DateTime selectedDate) onDateSelected;
   final Map<int, String> paidByOptions;
+  final int paidByInitialValue;
   final DateTime selectedDate;
+  final int userId;
 
   const ExpenseOptionsAdv({
     super.key,
@@ -14,6 +16,8 @@ class ExpenseOptionsAdv extends StatefulWidget {
     required this.onDateSelected,
     required this.paidByOptions,
     required this.selectedDate,
+    required this.paidByInitialValue,
+    required this.userId,
   });
 
   @override
@@ -23,8 +27,6 @@ class ExpenseOptionsAdv extends StatefulWidget {
 class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
   // Default paid by yourself // Default split type is equally
   int _paidBy = 0;
-  int userId = 0;
-  late Future<int> _paidByFuture;
   DateTime _selectedDate = DateTime.now(); // Store selected date
 
   late Map<String, String> _shareTypeOptions;
@@ -33,45 +35,17 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
   @override
   void initState() {
     super.initState();
-    _paidByFuture = getUserId();
     _shareTypeOptions = {
       'E': 'Equally',
       'P': 'Percentage',
       'S': 'No of shares'
     };
     _paidByOptions = widget.paidByOptions;
-  }
-
-  Future<int> getUserId() async {
-    int id = await SharedPreferenceService.getInt("userId");
-    return id;
+    _paidBy = widget.paidByInitialValue;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _paidByFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error fetching user ID'),
-            );
-          } else {
-            _paidBy = snapshot.data ?? 0;
-            userId = snapshot.data ?? 0; // Update userId with retrieved data
-            return _buildUI(); // Return the UI after getting the user ID
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(), // Show a loading indicator
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildUI() {
     return Column(
       children: [
         Row(
@@ -100,8 +74,9 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
               items: widget.paidByOptions.keys.map((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
-                  child: Text(
-                      value == userId ? 'You' : widget.paidByOptions[value]!),
+                  child: Text(value == widget.userId
+                      ? 'You'
+                      : widget.paidByOptions[value]!),
                 );
               }).toList(),
             ),
