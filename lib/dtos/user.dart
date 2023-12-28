@@ -11,6 +11,7 @@ class User {
   String? phone;
   String currency;
   String country;
+  String? image;
 
   User(
       {required this.userId,
@@ -20,6 +21,7 @@ class User {
       required this.password,
       required this.currency,
       required this.country,
+      this.image,
       this.phone});
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

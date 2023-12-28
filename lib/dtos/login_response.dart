@@ -1,42 +1,33 @@
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+part 'login_response.g.dart';
+
+@JsonSerializable(includeIfNull: false)
 class LoginResponse {
   final int userId;
   final String username;
+  final String currency;
+  final String displayCurrency;
+  final String country;
   final String email;
   final String token;
   String? phone;
-  LoginResponse({
-    required this.userId,
-    required this.username,
-    required this.email,
-    required this.token,
-    this.phone,
-  });
+  bool? isSubscribed;
+  String? subscriptionType;
+  LoginResponse(
+      {required this.userId,
+      required this.username,
+      required this.email,
+      required this.token,
+      required this.country,
+      required this.currency,
+      required this.displayCurrency,
+      this.phone,
+      this.isSubscribed,
+      this.subscriptionType});
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'userId': userId,
-      'username': username,
-      'email': email,
-      'token': token,
-      'phone': phone,
-    };
-  }
+  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseFromJson(json);
 
-  factory LoginResponse.fromMap(Map<String, dynamic> map) {
-    return LoginResponse(
-      userId: map['userId'] as int,
-      username: map['username'] as String,
-      email: map['email'] as String,
-      token: map['token'] as String,
-      phone: map['phone'] != null ? map['phone'] as String : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory LoginResponse.fromJson(String source) =>
-      LoginResponse.fromMap(json.decode(source) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
 }

@@ -7,6 +7,9 @@ class UIConstants {
   static const String COULD_NOT_PROCESS_ERROR_MESSAGE =
       "Could not process request. Please try again later";
 
+  static const String IMAGE_PERMMISSION_REQUIRED =
+      'Please grant permission to gallery for selecting images or click cancel to continue without an image.';
+
   static Text getAppTitle(double fontSize) {
     return Text(
       'SplitBuddies',

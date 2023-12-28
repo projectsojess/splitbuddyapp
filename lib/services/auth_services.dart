@@ -15,25 +15,13 @@ import 'package:splitbuddy/services/shared_preference_service.dart';
 class AuthService {
   void SignUpUser({
     required BuildContext context,
-    required String email,
-    required String password,
-    required String username,
-    String? phone,
+    required User userData,
   }) async {
     try {
-      User user = User(
-          country: '',
-          userId: 0,
-          username: username,
-          email: email,
-          token: '',
-          password: password,
-          phone: phone,
-          currency: '');
-
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
       http.Response res = await http.post(
         Uri.parse(ServerConstants.signupUrl),
-        body: user.toJson(),
+        body: jsonEncode(userData),
         headers: RequestHeaders.getUnAuthenticatedHeaders(),
       );
 
@@ -41,11 +29,13 @@ class AuthService {
       httpErrorHandle(
         response: res,
         context: context,
-        onSuccess: () {
-          Navigator.push(
-            context,
-            LoginView.route(),
-          );
+        onSuccess: () async {
+          userProvider.setUser(res.body);
+          await SharedPreferenceService.setString(
+              RequestHeaders.JWT_HEADER, jsonDecode(res.body)['token']);
+          await SharedPreferenceService.setInt(
+              'userId', userProvider.user.userId);
+          Navigator.push(context, HomeScreen.route());
         },
       );
     } catch (e) {

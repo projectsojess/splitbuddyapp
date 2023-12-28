@@ -14,6 +14,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       password: json['password'] as String,
       currency: json['currency'] as String,
       country: json['country'] as String,
+      image: json['image'] as String?,
       phone: json['phone'] as String?,
     );
 
@@ -35,5 +36,6 @@ Map<String, dynamic> _$UserToJson(User instance) {
   writeNotNull('phone', instance.phone);
   val['currency'] = instance.currency;
   val['country'] = instance.country;
+  writeNotNull('image', instance.image);
   return val;
 }

@@ -30,18 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final String iconPathDialpad = AssetConstants.dialpad;
   final AuthService authService = AuthService();
 
-  void signUpUser() {
-    authService.SignUpUser(
-      context: context,
-      email: emailController.text,
-      password: passwordController.text,
-      username: 'test',
-      phone: phoneNumberController.text != ''
-          ? _selectedCountry!.code + phoneNumberController.text
-          : '',
-    );
-  }
-
   void loadUserDetailScreen() {
     User userData = User(
       userId: 0,
@@ -83,11 +71,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                    padding: EdgeInsets.all(12),
-                    alignment: Alignment.center,
-                    child: Column(children: [
+                  padding: EdgeInsets.all(12),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Image.asset(
                         AssetConstants.signupScreenImage,
                         height: 250,
@@ -97,8 +90,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         height: 10.0,
                       ),
                       UIConstants.getText(
-                          'Create an account to track and split expenses', 16.0)
-                    ])),
+                          'Create an account to track and split expenses',
+                          15.0),
+                    ],
+                  ),
+                ),
                 Container(
                     padding: EdgeInsets.all(12),
                     alignment: Alignment.topLeft,
@@ -234,11 +230,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 12,
                 ),
                 SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 Container(
                   width: double.infinity,
-                  height: 60,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () {
                       // signUpUser();
