@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/views/expense_detail_screen.dart';
@@ -79,8 +80,6 @@ class _ExpenseTileState extends State<ExpenseTile> {
                 )
                 .share
             : 0;
-    var provider = Provider.of<UserProvider>(context);
-    print("user currency${provider.user.currency}");
     return Dismissible(
       key: Key(widget.expense.expenseId
           .toString()), // Use a unique key for each tile
@@ -178,16 +177,19 @@ class _ExpenseTileState extends State<ExpenseTile> {
                 SizedBox(
                   height: 2,
                 ),
-                Text(
-                  amount.toString(),
-                  style: TextStyle(
-                    color: isUserPayer
-                        ? Colors.green
-                        : isUserPayee
-                            ? Colors.red
-                            : Colors.grey,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) => Text(
+                    amount.toString() +
+                        UIConstants.getUnicode(userProvider.user.currency)!,
+                    style: TextStyle(
+                      color: isUserPayer
+                          ? Colors.green
+                          : isUserPayee
+                              ? Colors.red
+                              : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
               ],

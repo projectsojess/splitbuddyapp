@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
@@ -149,7 +150,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     width: 10,
                   ),
                   Text(
-                    debt.toStringAsFixed(2) + userProvider.user.displayCurrency,
+                    debt.toStringAsFixed(2) +
+                        UIConstants.getUnicode(userProvider.user.currency)!,
                     style: TextStyle(
                       color: color,
                       fontSize: 20,

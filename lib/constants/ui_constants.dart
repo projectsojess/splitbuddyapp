@@ -10,6 +10,12 @@ class UIConstants {
   static const String IMAGE_PERMMISSION_REQUIRED =
       'Please grant permission to gallery for selecting images or click cancel to continue without an image.';
 
+  static Map<String, String> _unicodeMap = {"INR": "₹", "USD": "\$"};
+
+  static String? getUnicode(String key) {
+    return _unicodeMap[key];
+  }
+
   static Text getAppTitle(double fontSize) {
     return Text(
       'SplitBuddies',
