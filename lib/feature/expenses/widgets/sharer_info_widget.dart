@@ -14,9 +14,19 @@ class SharerInfoWidget extends StatefulWidget {
 }
 
 class _SharerInfoWidgetState extends State<SharerInfoWidget> {
+  int userId = 0;
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
+
+  void getUserId() async {
+    userId = await SharedPreferenceService.getInt("userId");
+  }
+
   @override
   Widget build(BuildContext context) {
-    int userId = SharedPreferenceService.getInt('userId');
     return Column(
       children: [
         Container(

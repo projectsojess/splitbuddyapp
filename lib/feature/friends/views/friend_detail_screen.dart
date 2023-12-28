@@ -24,16 +24,20 @@ class FriendDetailScreen extends StatefulWidget {
 class _FriendDetailScreenState extends State<FriendDetailScreen> {
   Map<int, String> users = {};
   ExpenseService service = ExpenseService();
-  int userId = SharedPreferenceService.getInt("userId");
-
+  int userId = 0;
   @override
   void initState() {
     super.initState();
+    getUserId();
     service.getAllExpenses(context: context);
     users = {
       userId: 'You',
       widget.friend.friendId: widget.friend.name,
     };
+  }
+
+  void getUserId() async {
+    userId = await SharedPreferenceService.getInt("userId");
   }
 
   @override

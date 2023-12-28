@@ -5,24 +5,31 @@ import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/bill_widget.dart';
 import 'package:splitbuddy/feature/expenses/widgets/sharer_info_widget.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
-import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
-  static route({required int expenseId, required GroupData groupData}) =>
+  static route(
+          {required int expenseId,
+          required GroupData groupData,
+          required userId}) =>
       MaterialPageRoute(
           builder: (context) => ExpenseDetailScreen(
                 expenseId: expenseId,
                 groupData: groupData,
+                userId: userId,
               ));
   final int expenseId;
   final GroupData groupData;
-  const ExpenseDetailScreen(
-      {super.key, required this.expenseId, required this.groupData});
+  final int userId;
+  const ExpenseDetailScreen({
+    super.key,
+    required this.expenseId,
+    required this.groupData,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final int userId = SharedPreferenceService.getInt("userId");
     return Consumer<ExpensesProvider>(
         builder: (context, expenseProvider, child) {
       var expenseData = expenseProvider.expenses

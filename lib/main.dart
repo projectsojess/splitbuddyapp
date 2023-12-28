@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/feature/welcome_page.dart';
+import 'package:splitbuddy/feature/splash_screen.dart';
 import 'package:splitbuddy/providers/country_provider.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.theme,
-      home: const WelcomePage(),
+      home: const SplashScreen(),
     );
   }
 }

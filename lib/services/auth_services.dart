@@ -6,7 +6,6 @@ import 'package:splitbuddy/common/common.dart';
 import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/dtos/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/feature/auth/views/user_detail_screen.dart';
 import 'package:splitbuddy/feature/home/views/home_screen.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
@@ -31,10 +30,7 @@ class AuthService {
         context: context,
         onSuccess: () async {
           userProvider.setUser(res.body);
-          await SharedPreferenceService.setString(
-              RequestHeaders.JWT_HEADER, jsonDecode(res.body)['token']);
-          await SharedPreferenceService.setInt(
-              'userId', userProvider.user.userId);
+          await SharedPreferenceService.setLoginData(userProvider.user);
           Navigator.push(context, HomeScreen.route());
         },
       );
@@ -68,10 +64,7 @@ class AuthService {
           context: context,
           onSuccess: () async {
             userProvider.setUser(response.body);
-            await SharedPreferenceService.setString(
-                RequestHeaders.JWT_HEADER, jsonDecode(response.body)['token']);
-            await SharedPreferenceService.setInt(
-                'userId', userProvider.user.userId);
+            await SharedPreferenceService.setLoginData(userProvider.user);
             Navigator.push(context, HomeScreen.route());
           });
     } catch (e) {

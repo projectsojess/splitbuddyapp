@@ -55,14 +55,18 @@ class _CreateExpenseNormalState extends State<CreateExpenseNormal> {
     });
   }
 
+  int userId = 0;
+  void getUserId() async {
+    userId = await SharedPreferenceService.getInt("userId");
+  }
+
   @override
   void initState() {
     super.initState();
+    getUserId();
     _amountController.addListener(_calculateUntaxedAmount);
     _taxController.addListener(_calculateUntaxedAmount);
     _serviceChargeController.addListener(_calculateUntaxedAmount);
-
-    int userId = SharedPreferenceService.getInt("userId");
 
     _paidBy = userId;
     _payee = widget.friend[0].friendId;

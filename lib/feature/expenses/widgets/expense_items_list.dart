@@ -15,7 +15,17 @@ class ExpenseItemsList extends StatefulWidget {
 }
 
 class _ExpenseItemsListState extends State<ExpenseItemsList> {
-  final int userId = SharedPreferenceService.getInt("userId");
+  int userId = 0;
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
+
+  void getUserId() async {
+    userId = await SharedPreferenceService.getInt("userId");
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(

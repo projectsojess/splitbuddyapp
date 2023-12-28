@@ -11,12 +11,11 @@ import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:http/http.dart' as http;
 
 class GroupService {
-  String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
-
   void createGroup({required context, required CreateGroup createGroup}) async {
     try {
       var groupProvider = Provider.of<GroupProvider>(context, listen: false);
-
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       http.Response response = await http.post(
         Uri.parse(ServerConstants.createGroupUrl),
         body: jsonEncode(createGroup),
@@ -35,7 +34,8 @@ class GroupService {
 
   void getAllGroups({required context}) async {
     var groupProvider = Provider.of<GroupProvider>(context, listen: false);
-
+    String token =
+        await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
     http.Response response = await http.get(
       Uri.parse(ServerConstants.getAllGroupsUrl),
       headers: RequestHeaders.getAuthenticatedHeaders(token: token),
@@ -51,7 +51,8 @@ class GroupService {
 
   void getGroup({required context, required int groupId}) async {
     var groupProvider = Provider.of<GroupProvider>(context, listen: false);
-
+    String token =
+        await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
     http.Response response = await http.get(
       Uri.parse('${ServerConstants.getGroupUrl}/${groupId}'),
       headers: RequestHeaders.getAuthenticatedHeaders(token: token),

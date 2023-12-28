@@ -23,7 +23,8 @@ class ExpenseOptionsAdv extends StatefulWidget {
 class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
   // Default paid by yourself // Default split type is equally
   int _paidBy = 0;
-  int userId = SharedPreferenceService.getInt("userId");
+  int userId = 0;
+  late Future<int> _paidByFuture;
   DateTime _selectedDate = DateTime.now(); // Store selected date
 
   late Map<String, String> _shareTypeOptions;
@@ -32,18 +33,45 @@ class _ExpenseOptionsState extends State<ExpenseOptionsAdv> {
   @override
   void initState() {
     super.initState();
-
+    _paidByFuture = getUserId();
     _shareTypeOptions = {
       'E': 'Equally',
       'P': 'Percentage',
       'S': 'No of shares'
     };
     _paidByOptions = widget.paidByOptions;
-    _paidBy = userId;
+  }
+
+  Future<int> getUserId() async {
+    int id = await SharedPreferenceService.getInt("userId");
+    return id;
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _paidByFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error fetching user ID'),
+            );
+          } else {
+            _paidBy = snapshot.data ?? 0;
+            userId = snapshot.data ?? 0; // Update userId with retrieved data
+            return _buildUI(); // Return the UI after getting the user ID
+          }
+        } else {
+          return Center(
+            child: CircularProgressIndicator(), // Show a loading indicator
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildUI() {
     return Column(
       children: [
         Row(

@@ -276,15 +276,21 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 value: widget.items[i].shareType,
                                 onChanged: (newValue) {
                                   if (newValue != 'E') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return SharesDialogue(
-                                          users: widget.users,
-                                          item: widget.items[i],
-                                        );
-                                      },
-                                    );
+                                    if (widget.items[i].shareType != newValue) {
+                                      widget.items[i].shareValues = {};
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SharesDialogue(
+                                            users: widget.users,
+                                            selectedUsers:
+                                                widget.items[i].usersInvolved,
+                                            item: widget.items[i],
+                                          );
+                                        },
+                                      );
+                                    }
+
                                     setState(() {
                                       widget.items[i].shareType = newValue!;
                                     });
@@ -307,14 +313,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'Edit Values:',
+                                  'Edit :',
                                   style: TextStyle(
                                     color: Pallete.inputLabelTextColor,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10,
                                 ),
                                 Expanded(
                                     child: IconButton(
@@ -324,6 +327,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                             builder: (BuildContext context) {
                                               return SharesDialogue(
                                                   users: widget.users,
+                                                  selectedUsers: widget
+                                                      .items[i].usersInvolved,
                                                   item: widget.items[i]);
                                             },
                                           );
@@ -405,17 +410,41 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           if (widget.items[widget.items.length - 1]
                               .usersInvolved!.isEmpty) {
                             showSnackbar(context,
-                                "Pleae select atleast one user for ${widget.items[widget.items.length - 1].name}");
+                                "Pleae select atleast one payee for ${widget.items[widget.items.length - 1].name}");
                           } else {
-                            Navigator.push(
-                                context,
-                                CreateExpenseAdvanced.route(
-                                    expenseData: widget.expenseData,
-                                    users: widget.users,
-                                    items: widget.items,
-                                    fromScreen: widget.fromScreen,
-                                    userToFriendId: widget.userToFriendId,
-                                    groupId: widget.groupId));
+                            if (_formKey.currentState!.validate()) {
+                              if (widget.items[widget.items.length - 1]
+                                      .shareType ==
+                                  'P') {
+                                double totalShares = widget
+                                    .items[widget.items.length - 1]
+                                    .totalShares!;
+                                if (totalShares != 100) {
+                                  showSnackbar(context,
+                                      "Total percentage doesn't add upto 100");
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      CreateExpenseAdvanced.route(
+                                          expenseData: widget.expenseData,
+                                          users: widget.users,
+                                          items: widget.items,
+                                          fromScreen: widget.fromScreen,
+                                          userToFriendId: widget.userToFriendId,
+                                          groupId: widget.groupId));
+                                }
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    CreateExpenseAdvanced.route(
+                                        expenseData: widget.expenseData,
+                                        users: widget.users,
+                                        items: widget.items,
+                                        fromScreen: widget.fromScreen,
+                                        userToFriendId: widget.userToFriendId,
+                                        groupId: widget.groupId));
+                              }
+                            }
                           }
                         }
                       },

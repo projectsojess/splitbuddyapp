@@ -20,8 +20,6 @@ import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class ExpenseService {
-  String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
-  int userId = SharedPreferenceService.getInt("userId");
   FriendsService _friendsService = FriendsService();
   GroupService _groupService = GroupService();
   void createExpenseNormal({
@@ -41,6 +39,8 @@ class ExpenseService {
   }) async {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
     try {
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       double shareAmount = 0;
       double shareValue = 0;
       if (type == 'E') {
@@ -105,6 +105,8 @@ class ExpenseService {
 
   void getAllExpenses({required context}) async {
     try {
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       var expenseProvider =
           Provider.of<ExpensesProvider>(context, listen: false);
 
@@ -139,6 +141,8 @@ class ExpenseService {
   }) async {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
     var groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    String token =
+        await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
     ExpensesAdv expensesAdv = ExpensesAdv(
       payerId: payerId,
       date: date,
@@ -183,6 +187,8 @@ class ExpenseService {
       int? userToFriendId}) async {
     var expenseProvider = Provider.of<ExpensesProvider>(context, listen: false);
     try {
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       http.Response response = await http.delete(
         Uri.parse(
             '${ServerConstants.deleteExpenseUrl}?expenseId=${expenseId.toString()}${groupId != null ? '&groupId=$groupId' : ''} ${userToFriendId != null ? '&userToFriendId=$userToFriendId' : ''}'),
@@ -232,6 +238,8 @@ class ExpenseService {
       totalAmount: totalAmount,
       items: items,
     );
+    String token =
+        await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
     http.Response response = await http.put(
         Uri.parse(ServerConstants.editExpenseUrl),
         body: jsonEncode(expensesAdv),

@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_form_adv.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_options_ad.dart';
 import 'package:splitbuddy/services/expense_service.dart';
-import 'package:splitbuddy/services/service.dart';
 
 class CreateExpenseAdvanced extends StatefulWidget {
   final Map<int, String> users;
@@ -50,7 +47,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
 class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   ExpenseService service = ExpenseService();
-  int _paidBy = SharedPreferenceService.getInt("userId");
+  int _paidBy = 0;
   DateTime _selectedDate = DateTime.now();
   final amountController = TextEditingController();
   final descrptionController = TextEditingController();

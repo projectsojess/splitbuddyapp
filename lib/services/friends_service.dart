@@ -9,12 +9,12 @@ import 'package:splitbuddy/providers/friends_provider.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class FriendsService {
-  String token = SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
   void addFriend({required context, String? email, String? phone}) async {
     try {
       var friendsProvider =
           Provider.of<FriendsProvider>(context, listen: false);
-
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       http.Response response = await http.post(
         Uri.parse(ServerConstants.addFriendUrl),
         body: jsonEncode({"email": email, "phone": phone}),
@@ -37,6 +37,8 @@ class FriendsService {
     try {
       var friendsProvider =
           Provider.of<FriendsProvider>(context, listen: false);
+      String token =
+          await SharedPreferenceService.getString(RequestHeaders.JWT_HEADER);
       http.Response response = await http.get(
         Uri.parse(ServerConstants.getFriendsUrl),
         headers: RequestHeaders.getAuthenticatedHeaders(token: token),

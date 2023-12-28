@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
@@ -25,17 +24,46 @@ class GroupDetailScreen extends StatefulWidget {
 }
 
 class _GroupDetailScreenState extends State<GroupDetailScreen> {
-  int userId = SharedPreferenceService.getInt("userId");
+  late Future<int> userIdFuture;
   GroupService service = GroupService();
   GroupDetailTab _currentTab = GroupDetailTab.Expenses;
 
   @override
   void initState() {
     super.initState();
+    userIdFuture = getUserId();
+  }
+
+  Future<int> getUserId() async {
+    int id = await SharedPreferenceService.getInt("userId");
+    return id;
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<int>(
+      future: userIdFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error fetching user ID'),
+            );
+          } else {
+            final int userId =
+                snapshot.data ?? 0; // Update userId with retrieved data
+            return _buildUI(userId); // Return the UI after getting the user ID
+          }
+        } else {
+          return Center(
+            child: CircularProgressIndicator(), // Show a loading indicator
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildUI(int userId) {
     return Consumer<GroupProvider>(builder: (context, groupProvider, child) {
       var groupData = groupProvider.groups
           .firstWhere((group) => group.groupId == widget.groupId);
@@ -197,28 +225,5 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
       case GroupDetailTab.Overview:
         return 'Overview'; // Modify as needed for additional tabs
     }
-  }
-
-  double _calculateAmountBorrowedByUser(List<ExpenseData> expenses) {
-    double amountBorrowed = 0;
-    expenses.forEach((expense) {
-      bool payeeFound = expense.payees.any((payee) => payee.payeeId == userId);
-      if (payeeFound) {
-        amountBorrowed +=
-            expense.payees.firstWhere((payee) => payee.payeeId == userId).share;
-      }
-    });
-    return amountBorrowed;
-  }
-
-  double _calculateAmountLentByUser(List<ExpenseData> expenses) {
-    double amountLent = 0;
-    expenses.forEach((expense) {
-      bool payerFound = expense.payer.payerId == userId;
-      if (payerFound) {
-        amountLent += (expense.payer.payedAmount - expense.payer.share);
-      }
-    });
-    return amountLent;
   }
 }
