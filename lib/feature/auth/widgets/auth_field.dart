@@ -8,12 +8,14 @@ class AuthField extends StatefulWidget {
   final String hintText;
   final String iconPath;
   final bool obscureText;
+  final String? Function(String?)? validator;
   const AuthField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.iconPath,
     required this.obscureText,
+    required this.validator,
   });
 
   @override
@@ -38,6 +40,7 @@ class _AuthFieldState extends State<AuthField> {
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscureText,
+      validator: widget.validator,
       style: TextStyle(
         color: Pallete.inputFieldTextColor,
       ),

@@ -1,9 +1,12 @@
+import "package:email_validator/email_validator.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:splitbuddy/common/utils.dart";
 import "package:splitbuddy/constants/constants.dart";
 import "package:splitbuddy/feature/auth/views/signup_screen.dart";
 import "package:splitbuddy/feature/auth/widgets/auth_field.dart";
 import "package:splitbuddy/services/auth_services.dart";
+import "package:splitbuddy/services/country_service.dart";
 import "package:splitbuddy/themes/pallete.dart";
 
 class LoginView extends StatefulWidget {
@@ -16,6 +19,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  CountryService countryService = CountryService();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final String iconPathEmail = AssetConstants.envelope;
@@ -79,6 +83,15 @@ class _LoginViewState extends State<LoginView> {
                 controller: emailController,
                 hintText: 'Enter your email',
                 iconPath: iconPathEmail,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!EmailValidator.validate(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
               ),
               Container(
                   padding: EdgeInsets.all(12),
@@ -95,6 +108,12 @@ class _LoginViewState extends State<LoginView> {
                 controller: passwordController,
                 hintText: 'Enter your password',
                 iconPath: iconPathPassword,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
               ),
               Container(
                 alignment: Alignment.centerRight,
@@ -150,7 +169,14 @@ class _LoginViewState extends State<LoginView> {
                               fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () =>
-                                Navigator.push(context, SignUpScreen.route()),
+                                Navigator.push(context, SignUpScreen.route())
+                                    .then((value) {
+                                  if (value == 'not connected') {
+                                    showSnackbar(
+                                        context, "not internet connection");
+                                    countryService.getAllCountryCodes(context);
+                                  }
+                                }),
                         )
                       ]),
                 ),

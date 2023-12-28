@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 void showSnackbar(BuildContext context, String text) {
@@ -26,7 +27,7 @@ void httpErrorHandle({
       showSnackbar(context, jsonDecode(response.body)['message']);
       break;
     default:
-      showSnackbar(context, response.body);
+      showSnackbar(context, UIConstants.COULD_NOT_PROCESS_ERROR_MESSAGE);
   }
 }
 

@@ -4,6 +4,9 @@ import "package:splitbuddy/feature/auth/views/login_view.dart";
 import "package:splitbuddy/themes/pallete.dart";
 
 class UIConstants {
+  static const String COULD_NOT_PROCESS_ERROR_MESSAGE =
+      "Could not process request. Please try again later";
+
   static Text getAppTitle(double fontSize) {
     return Text(
       'SplitBuddies',
@@ -21,7 +24,6 @@ class UIConstants {
       text,
       style: TextStyle(
         fontSize: fontSize,
-        fontWeight: FontWeight.bold,
         fontFamily: 'Source Sans Pro',
         color: Pallete.textColor,
       ),

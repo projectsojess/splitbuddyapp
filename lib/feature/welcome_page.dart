@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:splitbuddy/common/utils.dart';
 import 'package:splitbuddy/constants/asset_constants.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/feature/auth/views/signup_screen.dart';
+import 'package:splitbuddy/services/country_service.dart';
 import 'package:splitbuddy/themes/theme.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  CountryService countryService = CountryService();
+
+  @override
+  void initState() {
+    super.initState();
+    countryService.getAllCountryCodes(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +62,12 @@ class WelcomePage extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => SignUpScreen(),
                           ),
-                        );
+                        ).then((value) {
+                          if (value == 'not connected') {
+                            showSnackbar(context, "no internet connection");
+                            countryService.getAllCountryCodes(context);
+                          }
+                        });
                       },
                       child: Center(
                         child: SvgPicture.asset(

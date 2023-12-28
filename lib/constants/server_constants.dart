@@ -1,8 +1,17 @@
 class ServerConstants {
   static const String _serverUrl = 'http://localhost:8800';
 
-  static const String signupUrl = '$_serverUrl/api/auth/create-user';
-  static const String signinUrl = '$_serverUrl/api/auth/log-in';
+  //user management service urls
+  static const String _userManagementUrl = 'http://localhost:8700';
+
+  static const String signupUrl = '$_userManagementUrl/api/auth/create-user';
+  static const String signinUrl = '$_userManagementUrl/api/auth/log-in';
+  static const String getAllCountriesUrl =
+      '$_userManagementUrl/api/auth/get-all-countries';
+
+  static const String checkUserExistsUrl =
+      '$_userManagementUrl/api/auth/user-exists';
+
   static const String addFriendUrl = '$_serverUrl/api/friends/add-friend';
   static const String getFriendsUrl = '$_serverUrl/api/friends/get-friends';
   static const String addExpenseNormalUrl =
