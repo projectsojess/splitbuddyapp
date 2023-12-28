@@ -9,8 +9,9 @@ import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseList extends StatelessWidget {
   final GroupData groupData;
+  final int userId;
 
-  const ExpenseList({super.key, required this.groupData});
+  const ExpenseList({super.key, required this.groupData, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,7 @@ class ExpenseList extends StatelessWidget {
                             groupId: groupData.groupId,
                             fromScreen: 'GBA',
                             items: [],
+                            userId: userId,
                           ),
                         ),
                       );

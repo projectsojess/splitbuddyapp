@@ -10,6 +10,7 @@ import 'package:splitbuddy/themes/pallete.dart';
 
 class AddItemScreen extends StatefulWidget {
   final Map<int, String> users;
+  final int userId;
   final int? userToFriendId;
   final String fromScreen;
   final int? groupId;
@@ -22,7 +23,8 @@ class AddItemScreen extends StatefulWidget {
       this.userToFriendId,
       required this.fromScreen,
       required this.items,
-      this.expenseData});
+      this.expenseData,
+      required this.userId});
 
   @override
   _AddItemScreenState createState() => _AddItemScreenState();
@@ -431,7 +433,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                           items: widget.items,
                                           fromScreen: widget.fromScreen,
                                           userToFriendId: widget.userToFriendId,
-                                          groupId: widget.groupId));
+                                          groupId: widget.groupId,
+                                          userId: widget.userId));
                                 }
                               } else {
                                 Navigator.push(
@@ -442,7 +445,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                         items: widget.items,
                                         fromScreen: widget.fromScreen,
                                         userToFriendId: widget.userToFriendId,
-                                        groupId: widget.groupId));
+                                        groupId: widget.groupId,
+                                        userId: widget.userId));
                               }
                             }
                           }

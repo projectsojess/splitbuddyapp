@@ -8,6 +8,7 @@ import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class CreateExpenseAdvanced extends StatefulWidget {
   final Map<int, String> users;
+  final int userId;
   final int? userToFriendId;
   final int? groupId;
   final List<Item>? items;
@@ -16,6 +17,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
 
   static route({
     required Map<int, String> users,
+    required int userId,
     List<Item>? items,
     required String fromScreen,
     int? groupId,
@@ -30,6 +32,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
                 groupId: groupId,
                 userToFriendId: userToFriendId,
                 expenseData: expenseData,
+                userId: userId,
               ));
 
   const CreateExpenseAdvanced(
@@ -39,7 +42,8 @@ class CreateExpenseAdvanced extends StatefulWidget {
       this.userToFriendId,
       this.groupId,
       required this.fromScreen,
-      this.expenseData});
+      this.expenseData,
+      required this.userId});
 
   @override
   State<CreateExpenseAdvanced> createState() => _CreateExpenseNormalState();
@@ -48,7 +52,7 @@ class CreateExpenseAdvanced extends StatefulWidget {
 class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   ExpenseService service = ExpenseService();
-  late Future<int> userIdFuture;
+
   int _paidBy = 0;
   DateTime _selectedDate = DateTime.now();
   final amountController = TextEditingController();
@@ -112,17 +116,12 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
         items: widget.items!);
   }
 
-  Future<int> getUserId() async {
-    int id = await SharedPreferenceService.getInt("userId");
-    return id;
-  }
-
   @override
   void initState() {
     super.initState();
-    userIdFuture = getUserId();
-    _paidBy =
-        widget.expenseData != null ? widget.expenseData!.payer.payerId : 0;
+    _paidBy = widget.expenseData != null
+        ? widget.expenseData!.payer.payerId
+        : widget.userId;
     widget.items!.forEach((item) {
       _untaxedAmount += (item.amount * item.quantity);
     });
@@ -153,31 +152,6 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: userIdFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error fetching user ID'),
-            );
-          } else {
-            final int userId =
-                snapshot.data ?? 0; // Update userId with retrieved data
-            return _buildUI(userId); // Return the UI after getting the user ID
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(), // Show a loading indicator
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildUI(userId) {
-    final int intialPaidBy =
-        widget.expenseData != null ? widget.expenseData!.payer.payerId : userId;
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -191,12 +165,12 @@ class _CreateExpenseNormalState extends State<CreateExpenseAdvanced> {
                 child: Column(
                   children: [
                     ExpenseOptionsAdv(
-                      userId: userId,
+                      userId: widget.userId,
                       onPaidByChanged: handlePaidByChanged,
                       onDateSelected: handleDateSelected,
                       selectedDate: _selectedDate,
                       paidByOptions: widget.users,
-                      paidByInitialValue: intialPaidBy,
+                      paidByInitialValue: _paidBy,
                     ),
                     SizedBox(
                       height: 20,

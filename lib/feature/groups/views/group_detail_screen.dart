@@ -5,6 +5,7 @@ import 'package:splitbuddy/feature/expenses/widgets/expense_list.dart';
 import 'package:splitbuddy/feature/groups/widgets/members.dart';
 import 'package:splitbuddy/feature/groups/widgets/overview.dart';
 import 'package:splitbuddy/providers/group_provider.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/group_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
@@ -47,7 +48,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
             return Center(
-              child: Text('Error fetching user ID'),
+              child: Text('Error fetching data'),
             );
           } else {
             final int userId =
@@ -103,6 +104,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                                 groupId: groupData.groupId,
                                 fromScreen: 'GBA',
                                 items: [],
+                                userId: userId,
                               )),
                     );
                     break;
@@ -129,31 +131,33 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
             SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  prefix,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Pallete.textColor,
+            Consumer<UserProvider>(
+              builder: (context, userProvider, child) => Row(
+                children: [
+                  SizedBox(
+                    width: 20,
                   ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  debt.toStringAsFixed(2),
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    prefix,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Pallete.textColor,
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    debt.toStringAsFixed(2) + userProvider.user.displayCurrency,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 20,
@@ -203,7 +207,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               ),
             ),
             _currentTab == GroupDetailTab.Expenses
-                ? ExpenseList(groupData: groupData)
+                ? ExpenseList(
+                    groupData: groupData,
+                    userId: userId,
+                  )
                 : _currentTab == GroupDetailTab.Overview
                     ? OverViewTab(groupData: groupData, userId: userId)
                     : MembersList(

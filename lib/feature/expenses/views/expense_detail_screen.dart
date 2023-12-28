@@ -49,6 +49,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                       fromScreen: 'GBAE',
                       items: expenseData.items!,
                       expenseData: expenseData,
+                      userId: userId,
                     ),
                   ),
                 );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/views/expense_detail_screen.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/service.dart';
 import 'package:splitbuddy/themes/pallete.dart';
@@ -77,6 +79,8 @@ class _ExpenseTileState extends State<ExpenseTile> {
                 )
                 .share
             : 0;
+    var provider = Provider.of<UserProvider>(context);
+    print("user currency${provider.user.currency}");
     return Dismissible(
       key: Key(widget.expense.expenseId
           .toString()), // Use a unique key for each tile
