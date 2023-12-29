@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:splitbuddy/dtos/friendResponse.dart';
+import 'package:splitbuddy/dtos/friend_response.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
 import 'package:splitbuddy/feature/friends/views/friend_detail_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
@@ -21,7 +21,6 @@ class _FriendScreenState extends State<FriendsScreen> {
   @override
   void initState() {
     super.initState();
-    service.getFriends(context: context);
   }
 
   @override
@@ -69,8 +68,12 @@ class _FriendScreenState extends State<FriendsScreen> {
               itemCount: friendsProvider.friends.length,
               itemBuilder: (context, index) {
                 final FriendResponse friend = friendsProvider.friends[index];
+                double amount =
+                    friend.amountLentToFriend - friend.amountOwedToFriend;
+                bool owed = amount >= 0;
+                amount = owed ? amount : -1 * amount;
                 final String prefix =
-                    friend.owed || friend.amount == 0 ? 'Owes ' : "You owe ";
+                    owed || amount == 0 ? 'Owes ' : "You owe ";
                 return ListTile(
                   leading: CircleAvatar(
                     // You can set profile images here
@@ -78,11 +81,9 @@ class _FriendScreenState extends State<FriendsScreen> {
                   ),
                   title: Text(friend.name),
                   trailing: Text(
-                    '${prefix}\$ ${friend.amount.toString()}',
+                    '${prefix}\$ ${amount.toString()}',
                     style: TextStyle(
-                      color: friend.owed || friend.amount == 0
-                          ? Colors.green
-                          : Colors.red,
+                      color: owed || amount == 0 ? Colors.green : Colors.red,
                     ),
                   ),
                   onTap: () {

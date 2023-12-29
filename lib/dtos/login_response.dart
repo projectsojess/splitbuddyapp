@@ -15,9 +15,6 @@ class LoginResponse {
   @HiveField(2)
   final String currency;
 
-  @HiveField(3)
-  final String displayCurrency;
-
   @HiveField(4)
   final String country;
 
@@ -43,7 +40,6 @@ class LoginResponse {
       required this.token,
       required this.country,
       required this.currency,
-      required this.displayCurrency,
       this.phone,
       this.isSubscribed,
       this.subscriptionType});

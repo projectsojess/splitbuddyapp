@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
-import 'package:splitbuddy/dtos/friendResponse.dart';
+import 'package:splitbuddy/dtos/friend_response.dart';
 import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
@@ -42,8 +42,11 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.friend.owed ? 'Owes' : 'You owes';
-    Color colorOwe = widget.friend.owed ? Colors.green : Colors.red;
+    double amount =
+        widget.friend.amountLentToFriend - widget.friend.amountOwedToFriend;
+    bool owed = amount >= 0;
+    String title = owed ? 'Owes' : 'You owes';
+    Color colorOwe = owed ? Colors.green : Colors.red;
     final List<FriendResponse> friends = [widget.friend];
     List<ExpenseData> expenses = Provider.of<ExpensesProvider>(context)
         .expenses
@@ -140,7 +143,7 @@ class _FriendDetailScreenState extends State<FriendDetailScreen> {
                                   Row(
                                     children: [
                                       Text(
-                                        widget.friend.amount.toString(),
+                                        amount.toString(),
                                         style: TextStyle(
                                           color: colorOwe,
                                           fontSize: 25,

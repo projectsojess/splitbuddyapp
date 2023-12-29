@@ -8,8 +8,10 @@ import 'package:splitbuddy/dtos/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:splitbuddy/feature/auth/views/user_detail_screen.dart';
 import 'package:splitbuddy/feature/home/views/home_screen.dart';
+import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/providers/friends_provider.dart';
+import 'package:splitbuddy/providers/group_provider.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
-import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class AuthService {
@@ -50,7 +52,11 @@ class AuthService {
       required String password}) async {
     try {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
-      ExpenseService expenseService = ExpenseService();
+      var groupProvider = Provider.of<GroupProvider>(context, listen: false);
+      var friendProvider = Provider.of<FriendsProvider>(context, listen: false);
+      var expenseProvider =
+          Provider.of<ExpensesProvider>(context, listen: false);
+
       http.Response response = await http.post(
         Uri.parse(ServerConstants.signinUrl),
         body: jsonEncode({
@@ -66,10 +72,13 @@ class AuthService {
           onSuccess: () async {
             userProvider.setUser(response.body);
             await SharedPreferenceService.setLoginData(userProvider.user);
-            expenseService.getAllExpenses(context: context);
+            groupProvider.addAllGroups(response.body);
+            friendProvider.addAllFriends(response.body);
+            expenseProvider.addAllExpenses(response.body);
             Navigator.push(context, HomeScreen.route());
           });
     } catch (e) {
+      print(e);
       // ignore: use_build_context_synchronously
       showSnackbar(context, UIConstants.COULD_NOT_PROCESS_ERROR_MESSAGE);
     }

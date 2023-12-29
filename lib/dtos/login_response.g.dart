@@ -23,7 +23,6 @@ class LoginResponseAdapter extends TypeAdapter<LoginResponse> {
       token: fields[6] as String,
       country: fields[4] as String,
       currency: fields[2] as String,
-      displayCurrency: fields[3] as String,
       phone: fields[7] as String?,
       isSubscribed: fields[8] as bool?,
       subscriptionType: fields[9] as String?,
@@ -33,15 +32,13 @@ class LoginResponseAdapter extends TypeAdapter<LoginResponse> {
   @override
   void write(BinaryWriter writer, LoginResponse obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
       ..write(obj.username)
       ..writeByte(2)
       ..write(obj.currency)
-      ..writeByte(3)
-      ..write(obj.displayCurrency)
       ..writeByte(4)
       ..write(obj.country)
       ..writeByte(5)
@@ -79,7 +76,6 @@ LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
       token: json['token'] as String,
       country: json['country'] as String,
       currency: json['currency'] as String,
-      displayCurrency: json['displayCurrency'] as String,
       phone: json['phone'] as String?,
       isSubscribed: json['isSubscribed'] as bool?,
       subscriptionType: json['subscriptionType'] as String?,
@@ -90,7 +86,6 @@ Map<String, dynamic> _$LoginResponseToJson(LoginResponse instance) {
     'userId': instance.userId,
     'username': instance.username,
     'currency': instance.currency,
-    'displayCurrency': instance.displayCurrency,
     'country': instance.country,
     'email': instance.email,
     'token': instance.token,

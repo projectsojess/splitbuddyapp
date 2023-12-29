@@ -16,7 +16,8 @@ class UserProvider extends ChangeNotifier {
   LoginResponse get user => _userBox.values.toList()[0];
 
   void setUser(String user) {
-    LoginResponse userRes = LoginResponse.fromJson(jsonDecode(user));
+    LoginResponse userRes =
+        LoginResponse.fromJson(jsonDecode(user)['userData']);
     _userBox.put(userRes.userId, userRes);
     notifyListeners();
   }

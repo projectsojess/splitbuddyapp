@@ -23,7 +23,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   void initState() {
     super.initState();
-    groupService.getAllGroups(context: context);
   }
 
   @override

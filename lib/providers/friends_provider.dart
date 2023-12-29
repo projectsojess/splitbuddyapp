@@ -1,61 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/friendResponse.dart';
+import 'package:hive/hive.dart';
+import 'package:splitbuddy/dtos/friend_response.dart';
 
 class FriendsProvider extends ChangeNotifier {
-  List<FriendResponse> _friends = [];
+  Box<FriendResponse> _friendsBox = Hive.box<FriendResponse>('friends');
 
-  List<FriendResponse> get friends => _friends;
+  List<FriendResponse> get friends => _friendsBox.values.toList();
+  void init() {
+    _friendsBox.watch().listen((event) {
+      notifyListeners();
+    });
+  }
 
   void addFriend(String friend) {
-    _friends.add(FriendResponse.fromJson(friend));
+    FriendResponse friendResponse = FriendResponse.fromJson(jsonDecode(friend));
+    _friendsBox.put(friendResponse.userToFriendId, friendResponse);
     notifyListeners();
   }
 
   void addAllFriends(String jsonString) {
-    List<FriendResponse> friendsResponse =
-        FriendResponse.friendResponseListFromJson(jsonString);
-    if (_friends.isNotEmpty) {
-      friendsResponse.forEach((response) {
-        bool found =
-            _friends.any((e) => e.userToFriendId == response.userToFriendId);
-
-        if (found) {
-          _friends.forEach((friend) {
-            if ((friend.userToFriendId == response.userToFriendId) &&
-                (friend.amount != response.amount)) {
-              friend.amount = response.amount;
-              friend.owed = response.owed;
-              notifyListeners();
-            }
-          });
-        } else {
-          _friends.add(response);
-          notifyListeners();
-        }
-      });
-    } else {
-      _friends.addAll(friendsResponse);
-      notifyListeners();
-    }
-  }
-
-  void addAllFriendsFromModel(List<FriendResponse> friends) {
-    this.friends.addAll(friends);
-    notifyListeners();
-  }
-
-  void addFriendModel(FriendResponse friend) {
-    friends.add(friend);
-    notifyListeners();
-  }
-
-  void removeFriend(int id) {
-    for (int i = 0; i < friends.length; i++) {
-      if (friends[i].userToFriendId == id) {
-        friends.removeAt(i);
-        notifyListeners();
-        break;
-      }
-    }
+    List<FriendResponse> friendResponse = List<FriendResponse>.from(
+        jsonDecode(jsonString)['friends']
+            .map((model) => FriendResponse.fromJson(model)));
+    friendResponse
+        .forEach((friend) => _friendsBox.put(friend.userToFriendId, friend));
   }
 }

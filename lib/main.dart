@@ -3,8 +3,11 @@ import 'package:hive/hive.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/expense_payee.dart';
 import 'package:splitbuddy/dtos/expense_payer.dart';
+import 'package:splitbuddy/dtos/friend_response.dart';
+import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/dtos/items.dart';
 import 'package:splitbuddy/dtos/login_response.dart';
+import 'package:splitbuddy/dtos/user_to_member_data.dart';
 import 'package:splitbuddy/feature/splash_screen.dart';
 import 'package:splitbuddy/providers/country_provider.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
@@ -26,9 +29,14 @@ void main() async {
   Hive.registerAdapter(ExpensePayerAdapter());
   Hive.registerAdapter(ItemAdapter());
   Hive.registerAdapter(LoginResponseAdapter());
+  Hive.registerAdapter(GroupDataAdapter());
+  Hive.registerAdapter(UserToMemberDataAdapter());
+  Hive.registerAdapter(FriendResponseAdapter());
 
   Hive.openBox<ExpenseData>("expenses");
   Hive.openBox<LoginResponse>("user");
+  Hive.openBox<GroupData>("groups");
+  Hive.openBox<FriendResponse>("friends");
 
   runApp(MultiProvider(
     providers: [
@@ -49,7 +57,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Splitbuddies',
       theme: AppTheme.theme,
       home: const SplashScreen(),
     );
