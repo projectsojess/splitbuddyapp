@@ -13,7 +13,8 @@ class ExpensesProvider extends ChangeNotifier {
     });
   }
 
-  List<ExpenseData> get expenses => _expenseBox.values.toList();
+  List<ExpenseData> get expenses =>
+      _expenseBox.values.toList()..sort((a, b) => b.date.compareTo(a.date));
 
   void addAllExpenses(String response) {
     List<ExpenseData> expenseResponse = List<ExpenseData>.from(
