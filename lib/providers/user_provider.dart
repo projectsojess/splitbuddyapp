@@ -1,27 +1,28 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:splitbuddy/dtos/login_response.dart';
 
 class UserProvider extends ChangeNotifier {
-  LoginResponse _user = LoginResponse(
-      userId: 0,
-      username: '',
-      email: '',
-      token: '',
-      country: '',
-      currency: '',
-      displayCurrency: '');
+  Box<LoginResponse> _userBox = Hive.box<LoginResponse>('user');
 
-  LoginResponse get user => _user;
+  void init() {
+    _userBox.watch().listen((event) {
+      notifyListeners();
+    });
+  }
+
+  LoginResponse get user => _userBox.values.toList()[0];
 
   void setUser(String user) {
-    _user = LoginResponse.fromJson(jsonDecode(user));
+    LoginResponse userRes = LoginResponse.fromJson(jsonDecode(user));
+    _userBox.put(userRes.userId, userRes);
     notifyListeners();
   }
 
-  void setUserFromModel(LoginResponse user) {
-    _user = user;
+  void removeUser(int userId) {
+    _userBox.delete(userId);
     notifyListeners();
   }
 }

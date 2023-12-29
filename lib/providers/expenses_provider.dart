@@ -1,40 +1,42 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/create_expense_response.dart';
+import 'package:hive/hive.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 
 class ExpensesProvider extends ChangeNotifier {
-  List<CreateExpenseResponse> _expensesFriends = [];
+  Box<ExpenseData> _expenseBox = Hive.box<ExpenseData>('expenses');
 
-  List<ExpenseData> _expenses = [];
+  void init() {
+    _expenseBox.watch().listen((event) {
+      notifyListeners();
+    });
+  }
 
-  List<ExpenseData> get expenses => _expenses;
+  List<ExpenseData> get expenses => _expenseBox.values.toList();
 
   void addAllExpenses(String response) {
     List<ExpenseData> expenseResponse = List<ExpenseData>.from(
         jsonDecode(response)['expenses']
             .map((model) => ExpenseData.fromJson(model)));
-    _expenses = expenseResponse;
+    expenseResponse
+        .forEach((expense) => _expenseBox.put(expense.expenseId, expense));
     notifyListeners();
   }
 
   void addExpense(String expense) {
     ExpenseData expenseResponse = ExpenseData.fromJson(jsonDecode(expense));
-    _expenses.insert(0, expenseResponse);
+    _expenseBox.put(expenseResponse.expenseId, expenseResponse);
     notifyListeners();
   }
 
   void removeExepnse(int expenseId) {
-    _expenses.removeWhere((expense) => expense.expenseId == expenseId);
-    notifyListeners();
+    _expenseBox.delete(expenseId);
   }
 
   void editExpense(String expense) {
     ExpenseData expenseResponse = ExpenseData.fromJson(jsonDecode(expense));
-    int index = _expenses.indexWhere(
-        (expense) => expense.expenseId == expenseResponse.expenseId);
-    _expenses[index] = expenseResponse;
+    _expenseBox.put(expenseResponse.expenseId, expenseResponse);
     notifyListeners();
   }
 }

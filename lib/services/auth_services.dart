@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:splitbuddy/feature/auth/views/user_detail_screen.dart';
 import 'package:splitbuddy/feature/home/views/home_screen.dart';
 import 'package:splitbuddy/providers/user_provider.dart';
+import 'package:splitbuddy/services/expense_service.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
 
 class AuthService {
@@ -49,7 +50,7 @@ class AuthService {
       required String password}) async {
     try {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
-
+      ExpenseService expenseService = ExpenseService();
       http.Response response = await http.post(
         Uri.parse(ServerConstants.signinUrl),
         body: jsonEncode({
@@ -65,14 +66,12 @@ class AuthService {
           onSuccess: () async {
             userProvider.setUser(response.body);
             await SharedPreferenceService.setLoginData(userProvider.user);
+            expenseService.getAllExpenses(context: context);
             Navigator.push(context, HomeScreen.route());
           });
     } catch (e) {
       // ignore: use_build_context_synchronously
-      showSnackbar(
-        context,
-        e.toString(),
-      );
+      showSnackbar(context, UIConstants.COULD_NOT_PROCESS_ERROR_MESSAGE);
     }
   }
 

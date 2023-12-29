@@ -24,7 +24,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
   void initState() {
     super.initState();
     groupService.getAllGroups(context: context);
-    expenseService.getAllExpenses(context: context);
   }
 
   @override
