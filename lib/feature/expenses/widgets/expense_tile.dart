@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:splitbuddy/common/utils.dart';
 import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
@@ -103,19 +104,14 @@ class _ExpenseTileState extends State<ExpenseTile> {
         child: ListTile(
             contentPadding: EdgeInsets.all(16.0),
             onTap: () {
-              Navigator.push(
-                      context,
-                      ExpenseDetailScreen.route(
-                          expenseId: widget.expense.expenseId,
-                          groupData: widget.groupData,
-                          userId: userId))
-                  .then((value) {
-                if (value != null && value == 'delete') {
-                  print(value);
-                  deleteExpense(
-                      widget.expense.expenseId, widget.expense.expenseId);
-                }
-              });
+              if (!isUserPayee && !isUserPayer) {
+                showSnackbar(context, UIConstants.CANT_EDIT_EXPENSE);
+              } else {
+                Navigator.push(
+                    context,
+                    ExpenseDetailScreen.route(
+                        expenseId: widget.expense.expenseId, userId: userId));
+              }
             },
             leading: Container(
               child: Column(
@@ -179,8 +175,8 @@ class _ExpenseTileState extends State<ExpenseTile> {
                 ),
                 Consumer<UserProvider>(
                   builder: (context, userProvider, child) => Text(
-                    amount.toString() +
-                        UIConstants.getUnicode(userProvider.user.currency)!,
+                    UIConstants.getUnicode(userProvider.user.currency)! +
+                        amount.toStringAsFixed(2),
                     style: TextStyle(
                       color: isUserPayer
                           ? Colors.green

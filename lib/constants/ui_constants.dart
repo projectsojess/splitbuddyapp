@@ -10,10 +10,22 @@ class UIConstants {
   static const String IMAGE_PERMMISSION_REQUIRED =
       'Please grant permission to gallery for selecting images or click cancel to continue without an image.';
 
+  static const String CANT_EDIT_EXPENSE =
+      "You can't edit an expense that you're not involved";
+
   static Map<String, String> _unicodeMap = {"INR": "₹", "USD": "\$"};
+
+  static Map<String, IconData> _currencyIconMap = {
+    "INR": Icons.currency_rupee_sharp,
+    "USD": Icons.attach_money_outlined
+  };
 
   static String? getUnicode(String key) {
     return _unicodeMap[key];
+  }
+
+  static IconData? getCurrencyIcon(String key) {
+    return _currencyIconMap[key];
   }
 
   static Text getAppTitle(double fontSize) {

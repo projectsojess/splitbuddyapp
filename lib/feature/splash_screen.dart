@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splitbuddy/feature/auth/views/login_view.dart';
 import 'package:splitbuddy/feature/home/views/home_screen.dart';
 import 'package:splitbuddy/feature/welcome_page.dart';
 import 'package:splitbuddy/services/shared_preference_service.dart';
@@ -20,8 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void checkLoginStatus() async {
-    bool isLoggedIn =
-        await SharedPreferenceService.getBool('isLoggedIn') ?? false;
+    bool isLoggedIn = await SharedPreferenceService.getBool('isLoggedIn');
     int userId = await SharedPreferenceService.getInt("userId");
     print("userid${userId}");
     // Navigate based on login status

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class MembersList extends StatefulWidget {

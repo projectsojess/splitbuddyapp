@@ -47,7 +47,7 @@ class UserToMemberShareWidget extends StatelessWidget {
                       ),
                       Text(
                         isUserLent
-                            ? amount.toString()
+                            ? amount.toStringAsFixed(2)
                             : (-1 * amount).toStringAsFixed(2),
                         style: TextStyle(
                           fontSize: 15,

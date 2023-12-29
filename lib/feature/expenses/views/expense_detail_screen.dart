@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:splitbuddy/dtos/friend_response.dart';
 import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/add_items.dart';
 import 'package:splitbuddy/feature/expenses/widgets/bill_widget.dart';
 import 'package:splitbuddy/feature/expenses/widgets/sharer_info_widget.dart';
 import 'package:splitbuddy/providers/expenses_provider.dart';
+import 'package:splitbuddy/providers/friends_provider.dart';
+import 'package:splitbuddy/providers/group_provider.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
-  static route(
-          {required int expenseId,
-          required GroupData groupData,
-          required userId}) =>
-      MaterialPageRoute(
-          builder: (context) => ExpenseDetailScreen(
-                expenseId: expenseId,
-                groupData: groupData,
-                userId: userId,
-              ));
+  static route({required int expenseId, required userId}) => MaterialPageRoute(
+      builder: (context) => ExpenseDetailScreen(
+            expenseId: expenseId,
+            userId: userId,
+          ));
   final int expenseId;
-  final GroupData groupData;
   final int userId;
   const ExpenseDetailScreen({
     super.key,
     required this.expenseId,
-    required this.groupData,
     required this.userId,
   });
 
@@ -38,27 +34,71 @@ class ExpenseDetailScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddItemScreen(
-                      users: groupData.members,
-                      groupId: groupData.groupId,
-                      fromScreen: 'GBAE',
-                      items: expenseData.items!,
-                      expenseData: expenseData,
-                      userId: userId,
+            if (expenseData.groupId != 0) ...[
+              Consumer<GroupProvider>(
+                builder: (context, groupProvider, child) {
+                  GroupData groupData = groupProvider.groups.firstWhere(
+                    (group) => group.groupId == expenseData.groupId,
+                  );
+                  return IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddItemScreen(
+                            users: groupData.members,
+                            groupId: groupData.groupId,
+                            fromScreen: 'GBAE',
+                            items: expenseData.items!,
+                            expenseData: expenseData,
+                            userId: userId,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.edit,
+                      color: Pallete.secondaryColor,
                     ),
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.edit,
-                color: Pallete.secondaryColor,
-              ),
-            ),
+                  );
+                },
+              )
+            ],
+            if (expenseData.userToFriendId != 0) ...[
+              Consumer<FriendsProvider>(
+                builder: (context, friendsProvider, child) {
+                  FriendResponse friend = friendsProvider.friends.firstWhere(
+                    (friend) =>
+                        friend.userToFriendId == expenseData.userToFriendId,
+                  );
+                  Map<int, String> users = {
+                    userId: "You",
+                    friend.friendId: friend.name
+                  };
+                  return IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddItemScreen(
+                            users: users,
+                            userToFriendId: expenseData.userToFriendId,
+                            fromScreen: 'FBAE',
+                            items: expenseData.items!,
+                            expenseData: expenseData,
+                            userId: userId,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.edit,
+                      color: Pallete.secondaryColor,
+                    ),
+                  );
+                },
+              )
+            ]
           ],
           title: Text('Expense Details'),
         ),
@@ -100,7 +140,9 @@ class ExpenseDetailScreen extends StatelessWidget {
                   height: 30,
                 ),
                 if (expenseData.items!.isNotEmpty) ...[
-                  BillWidget(expense: expenseData, groupData: groupData),
+                  BillWidget(
+                    expense: expenseData,
+                  ),
                   SizedBox(
                     height: 20,
                   ),

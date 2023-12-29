@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splitbuddy/constants/constants.dart';
 import 'package:splitbuddy/feature/groups/views/groups_screen.dart';
 import 'package:splitbuddy/feature/account/views/account_screen.dart';
-import 'package:splitbuddy/feature/expenses/views/create_expense.dart';
 import 'package:splitbuddy/feature/friends/views/friends_screen.dart';
-import 'package:splitbuddy/feature/home/views/home_content.dart';
+import 'package:splitbuddy/feature/home/views/transactions_screen.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class AppNavigationBar extends StatefulWidget {
@@ -20,9 +22,9 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    HomeContent(),
     FriendsScreen(),
     GroupsScreen(),
+    TransactionsScreen(),
     AccountScreen(),
   ];
   void navidationToScreen(int index) {
@@ -46,16 +48,19 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
         backgroundColor: Colors.orange,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            buildNavBarItem(Icons.home, 0),
-            buildNavBarItem(Icons.person, 1),
-            buildNavBarItem(Icons.group, 2),
-            buildNavBarItem(Icons.account_circle, 3),
-          ],
+      bottomNavigationBar: Consumer<UserProvider>(
+        builder: (context, userProvider, child) => BottomAppBar(
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              buildNavBarItem(Icons.person, 0),
+              buildNavBarItem(Icons.group, 1),
+              buildNavBarItem(
+                  UIConstants.getCurrencyIcon(userProvider.user.currency)!, 2),
+              buildNavBarItem(Icons.account_circle, 3),
+            ],
+          ),
         ),
       ),
     );

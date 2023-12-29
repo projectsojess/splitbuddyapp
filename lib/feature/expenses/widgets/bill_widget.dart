@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:splitbuddy/common/utils.dart';
 import 'package:splitbuddy/dtos/expense_data.dart';
-import 'package:splitbuddy/dtos/group_data.dart';
 import 'package:splitbuddy/feature/expenses/widgets/expense_items_list.dart';
 import 'package:splitbuddy/themes/pallete.dart';
 
 class BillWidget extends StatefulWidget {
-  final GroupData groupData;
   final ExpenseData expense;
-  const BillWidget({super.key, required this.expense, required this.groupData});
+  const BillWidget({super.key, required this.expense});
 
   @override
   State<BillWidget> createState() => _BillWidgetState();
@@ -64,7 +62,7 @@ class _BillWidgetState extends State<BillWidget> {
         ),
         ExpenseItemsList(
           items: widget.expense.items!,
-          groupData: widget.groupData,
+          groupId: widget.expense.groupId!,
         ),
         getUnderLine(),
         if (widget.expense.tax != 0) ...[

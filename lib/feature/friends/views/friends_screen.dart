@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:splitbuddy/constants/ui_constants.dart';
 import 'package:splitbuddy/dtos/friend_response.dart';
 import 'package:splitbuddy/feature/friends/views/add_friends_screen.dart';
 import 'package:splitbuddy/feature/friends/views/friend_detail_screen.dart';
 import 'package:splitbuddy/providers/friends_provider.dart';
+import 'package:splitbuddy/providers/user_provider.dart';
 import 'package:splitbuddy/services/friends_service.dart';
 import 'package:splitbuddy/themes/theme.dart';
 
@@ -72,19 +74,37 @@ class _FriendScreenState extends State<FriendsScreen> {
                     friend.amountLentToFriend - friend.amountOwedToFriend;
                 bool owed = amount >= 0;
                 amount = owed ? amount : -1 * amount;
+                Color color = owed ? Colors.green : Colors.red;
                 final String prefix =
-                    owed || amount == 0 ? 'Owes ' : "You owe ";
+                    owed || amount == 0 ? 'Owes you' : "You owe ";
                 return ListTile(
                   leading: CircleAvatar(
                     // You can set profile images here
                     child: Text(friend.name[0]),
                   ),
                   title: Text(friend.name),
-                  trailing: Text(
-                    '${prefix}\$ ${amount.toString()}',
-                    style: TextStyle(
-                      color: owed || amount == 0 ? Colors.green : Colors.red,
-                    ),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        prefix,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 11,
+                        ),
+                      ),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) => Text(
+                          '${UIConstants.getUnicode(userProvider.user.currency)} ${amount.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   onTap: () {
                     Navigator.push(
