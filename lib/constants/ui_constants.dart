@@ -13,6 +13,9 @@ class UIConstants {
   static const String CANT_EDIT_EXPENSE =
       "You can't edit an expense that you're not involved";
 
+  static const String GROUP_LENT = "You'll get";
+  static const String GROUP_OWE = "You owe";
+
   static Map<String, String> _unicodeMap = {"INR": "₹", "USD": "\$"};
 
   static Map<String, IconData> _currencyIconMap = {
@@ -79,5 +82,19 @@ class UIConstants {
   static Future<Object?> getLoginScreen(BuildContext context) {
     return Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginView()));
+  }
+
+  static Switch getSwitch(onchage, value) {
+    return Switch(
+      activeTrackColor: Pallete.secondaryColor,
+      inactiveTrackColor: Pallete.backgroundColor,
+      trackOutlineColor:
+          MaterialStateProperty.all<Color>(Pallete.secondaryColor),
+      inactiveThumbColor: Pallete.secondaryColor,
+      value: value, // Replace with actual user preference
+      onChanged: (value) {
+        // Implement logic to update user's notification preference
+      },
+    );
   }
 }

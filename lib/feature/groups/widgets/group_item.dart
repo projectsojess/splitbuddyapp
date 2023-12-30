@@ -18,7 +18,7 @@ class GroupItem extends StatelessWidget {
     double debt =
         isDebt ? amountBorrowed - amountLent : amountLent - amountBorrowed;
     Color color = isDebt ? Colors.red : Colors.green;
-    String prefix = isDebt ? "You owe" : "Owes you";
+    String prefix = isDebt ? UIConstants.GROUP_OWE : UIConstants.GROUP_LENT;
     return ListTile(
       leading: CircleAvatar(
         child: Text(groupData.groupName[0]),
